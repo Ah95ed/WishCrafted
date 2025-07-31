@@ -1,11 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
+import 'package:wishcrafted/Helper/Service/initService.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
-import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 
-
-void main() {
-  runApp(const WishCraftedApp());
+void main() async {
+  await runZonedGuarded<Future<void>>(
+    () async {
+      // Initialize services
+      await WidgetsFlutterBinding.ensureInitialized();
+      await InitService.instance.initService();
+      runApp(const WishCraftedApp());
+    },
+    (error, stackTrace) {
+      // Handle errors
+      logError('An error occurred in the main zone - ${error.toString()}');
+    },
+  );
 }
 
 class WishCraftedApp extends StatelessWidget {
@@ -13,14 +28,21 @@ class WishCraftedApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WishCrafted Login',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        brightness: Brightness.light,
-      ),
-      home: SplashScreen(),
-      debugShowCheckedModeBanner: false,
+    return Consumer<LanguageController>(
+      builder: (context, value, child) {
+        return MaterialApp(
+          supportedLocales: value.supportLanguage,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          title: 'WishCrafted Login',
+          locale: value.currentLocale,
+          home: SplashScreen(),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }

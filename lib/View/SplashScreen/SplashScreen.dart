@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
-import 'package:wishcrafted/View/style/AppColors.dart';
+import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 
 class SplashScreen extends StatefulWidget {
   static const Route = "SplashScreen";

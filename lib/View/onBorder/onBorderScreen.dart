@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
-import 'package:wishcrafted/View/style/AppColors.dart';
+import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

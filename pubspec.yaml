@@ -5,20 +5,27 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
-  flutter: ^3.29.1
+  sdk: ^3.8.1
+  flutter: ^3.32.8
 dependencies:
   flutter:
     sdk: flutter
   flutter_tts:
+  provider: 
+  flutter_localizations:
+    sdk: flutter
 
-  cupertino_icons: 
+  cupertino_icons:
+  shared_preferences:
 
 
 
 flutter:
 
   uses-material-design: true
+
+flutter_intl:
+  enabled: true
 
   # assets:
   #   - images/a_dot_burr.jpeg
