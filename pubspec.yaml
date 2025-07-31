@@ -10,20 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_tts:
 
   cupertino_icons: 
-  speech_to_text: 
-  provider: 
-  
 
-  
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_tts: 
-
-  flutter_lints: ^5.0.0
 
 
 flutter:

@@ -1,168 +1,233 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
-class SpecialNeedsScreen extends StatefulWidget {
-  const SpecialNeedsScreen({super.key});
+class AccessibleApp extends StatefulWidget {
+  const AccessibleApp({super.key});
 
   @override
-  State<SpecialNeedsScreen> createState() => _SpecialNeedsScreenState();
+  State<AccessibleApp> createState() => _AccessibleAppState();
 }
 
-class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
-  double fontSize = 16;
-  Color textColor = Colors.black;
-  Color bgColor = Colors.deepPurple[50]!;
-
-  // زر تكبير الخط: يزيد حجم الخط في الشاشة
-  void _increaseFontSize() {
-    setState(() {
-      fontSize = fontSize < 28 ? fontSize + 2 : fontSize;
-    });
-  }
-
-  // زر تغيير الألوان: يغير ألوان النص والخلفية لتسهيل القراءة
-  void _toggleColors() {
-    setState(() {
-      if (bgColor == Colors.deepPurple[50]) {
-        bgColor = Colors.black;
-        textColor = Colors.white;
-      } else {
-        bgColor = Colors.deepPurple[50]!;
-        textColor = Colors.black;
-      }
-    });
-  }
-
-  // زر تشغيل قارئ الشاشة: يظهر رسالة توضيحية (في التطبيق الحقيقي يتم دعم قارئ الشاشة تلقائياً)
-  void _activateScreenReader() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('تم تفعيل دعم قارئ الشاشة.')));
-  }
-
-  // زر الأوامر الصوتية: يظهر رسالة توضيحية (في التطبيق الحقيقي يمكن إضافة دعم الأوامر الصوتية)
-  void _activateVoiceCommands() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تم تفعيل دعم الأوامر الصوتية.')),
-    );
-  }
-
-  // زر دعم لغة الإشارة: يظهر رسالة توضيحية (في التطبيق الحقيقي يمكن إضافة فيديو أو ترجمة نصية)
-  void _activateSignLanguageSupport() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('تم تفعيل دعم لغة الإشارة.')));
-  }
+class _AccessibleAppState extends State<AccessibleApp> {
+  double _fontSize = 18;
+  final FlutterTts _flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
+    _flutterTts.setLanguage("ar");
+    _flutterTts.setSpeechRate(0.4);
+    _flutterTts.setPitch(1.0);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        title: const Text('قسم الاحتياجات الخاصة'),
-        backgroundColor: Colors.deepPurple,
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-            margin: const EdgeInsets.all(32),
-            child: Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.accessibility_new,
-                    size: 64,
-                    color: Colors.deepPurple,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'مرحبا بك في قسم الاحتياجات الخاصة',
-                    style: TextStyle(
-                      fontSize: fontSize + 6,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple[700],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'هنا يمكنك الحصول على خدمات ودعم مخصص لذوي الاحتياجات الخاصة.',
-                    style: TextStyle(fontSize: fontSize, color: textColor),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  // دعم تكبير الخط
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.zoom_in),
-                        label: const Text('تكبير الخط'),
-                        onPressed: _increaseFontSize,
-                      ),
-                      const SizedBox(width: 12),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.color_lens),
-                        label: const Text('تغيير الألوان'),
-                        onPressed: _toggleColors,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // دعم قارئ الشاشة
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.record_voice_over),
-                    label: const Text('تشغيل قارئ الشاشة'),
-                    onPressed: _activateScreenReader,
-                  ),
-                  const SizedBox(height: 16),
-                  // دعم الأوامر الصوتية
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.mic),
-                    label: const Text('الأوامر الصوتية'),
-                    onPressed: _activateVoiceCommands,
-                  ),
-                  const SizedBox(height: 16),
-                  // دعم لغة الإشارة أو الترجمة النصية
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.sign_language),
-                    label: const Text('دعم لغة الإشارة'),
-                    onPressed: _activateSignLanguageSupport,
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 24,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('العودة'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+  Future<void> _speak(String text) async {
+    await _flutterTts.stop();
+    await _flutterTts.speak(text);
+  }
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color(0xFFF7FAFC), // لون خلفية هادئ جداً
+    body: Stack(
+      children: [
+        // منحنى علوي
+        ClipPath(
+          clipper: TopCurveClipper(),
+          child: Container(
+            height: 220,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFB2DFDB), Color(0xFFE0F7FA)], // ألوان تركواز فاتح وهادئ
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
           ),
         ),
+        // منحنى سفلي
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: ClipPath(
+            clipper: BottomCurveClipper(),
+            child: Container(
+              height: 120,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFE0F2F1), Color(0xFFB2DFDB)], // ألوان تركواز فاتح وهادئ
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+          ),
+        ),
+        // محتوى الشاشة
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 40),
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.teal.withOpacity(0.15),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const CircleAvatar(
+                      radius: 38,
+                      backgroundColor: Color(0xFF80CBC4), // تركواز هادئ
+                      child: Icon(
+                        Icons.accessibility_new,
+                        size: 44,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Center(
+                  child: Text(
+                    'تسهيل الوصول',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal[700], // لون هادئ للنص
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.teal.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'الحجم الحالي: ${_fontSize.toInt()}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Slider(
+                        value: _fontSize,
+                        min: 12,
+                        max: 40,
+                        divisions: 14,
+                        activeColor: Colors.teal,
+                        label: _fontSize.toInt().toString(),
+                        onChanged: (value) {
+                          setState(() {
+                            _fontSize = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      buildTextBox("مرحباً بك في تطبيق تسهيل الوصول"),
+                      const SizedBox(height: 15),
+                      buildTextBox("اضغط مطولاً للاستماع إلى هذا النص"),
+                      const SizedBox(height: 15),
+                      buildTextBox("تم تكبير الخط بنجاح!"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildTextBox(String text) {
+  return GestureDetector(
+    onLongPress: () {
+      _speak(text);
+    },
+    child: AnimatedDefaultTextStyle(
+      duration: const Duration(milliseconds: 300),
+      style: TextStyle(
+        fontSize: _fontSize,
+        color: const Color(0xFF455A64), // رمادي أزرق هادئ
+        fontWeight: FontWeight.w500,
       ),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE0F2F1), // خلفية تركواز فاتح جداً
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.teal.withOpacity(0.07),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Text(text),
+      ),
+    ),
+  );
+}
+}
+// منحنى علوي
+class TopCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, size.height - 60);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 60,
     );
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
   }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+// منحنى سفلي
+class BottomCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, 60);
+    path.quadraticBezierTo(size.width / 2, 0, size.width, 60);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

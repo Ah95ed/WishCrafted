@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/View/AccessibleHomePage.dart';
-import 'package:wishcrafted/View/AuthGoogle.dart';
-import 'package:wishcrafted/View/LoginScreen.dart';
 import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
+import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
+import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
+
 
 void main() {
   runApp(const WishCraftedApp());
@@ -19,7 +19,7 @@ class WishCraftedApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         brightness: Brightness.light,
       ),
-      home: AccessibleHomePage(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
