@@ -7,6 +7,8 @@ import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
+import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
+import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 
 void main() async {
   await runZonedGuarded<Future<void>>(
@@ -14,7 +16,17 @@ void main() async {
       // Initialize services
       await WidgetsFlutterBinding.ensureInitialized();
       await InitService.instance.initService();
-      runApp(const WishCraftedApp());
+      runApp(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => LanguageController(),
+              lazy: true,
+            ),
+          ],
+          child: const WishCraftedApp(),
+        ),
+      );
     },
     (error, stackTrace) {
       // Handle errors
@@ -30,17 +42,22 @@ class WishCraftedApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<LanguageController>(
       builder: (context, value, child) {
-        return MaterialApp(
-          supportedLocales: value.supportLanguage,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          title: 'WishCrafted Login',
-          locale: value.currentLocale,
-          home: SplashScreen(),
-          debugShowCheckedModeBanner: false,
+        return SizeBuilder(
+          baseSize: Size(360, 690),
+          height: context.screenHeight,
+          width: context.screenWidth,
+          child: MaterialApp(
+            supportedLocales: value.supportLanguage,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            title: 'WishCrafted Login',
+            locale: value.currentLocale,
+            home: SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          ),
         );
       },
     );

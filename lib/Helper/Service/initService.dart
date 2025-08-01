@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 
 late SharedPreferences shared;
 
@@ -11,5 +12,6 @@ class InitService {
   Future<void> initService() async {
     WidgetsFlutterBinding.ensureInitialized();
     shared = await SharedPreferences.getInstance();
+     await initLang(shared.getString('lang') ?? 'en');
   }
 }

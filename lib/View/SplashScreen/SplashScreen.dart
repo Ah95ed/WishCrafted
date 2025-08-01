@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     double _height = MediaQuery.of(context).size.height;
-    log("messaged  _____________ $_fontSize");
+  
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(

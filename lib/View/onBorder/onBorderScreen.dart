@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
+import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -41,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ClipPath(
             clipper: TopCurveClipper(),
             child: Container(
-              height: 200,
+              height: context.getHeight(200),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [AppColors.curveTop1, AppColors.curveTop2],
@@ -57,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: ClipPath(
               clipper: BottomCurveClipper(),
               child: Container(
-                height: 100,
+                height: context.getHeight(100),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [AppColors.curveBottom1, AppColors.curveBottom2],
@@ -84,14 +87,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     itemBuilder: (context, index) {
                       final page = pages[index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.getWidth(24),
+                          vertical: context.getHeight(20),
+                        ),
                         child: Card(
                           elevation: 8,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
                           ),
                           color: AppColors.card,
-                          shadowColor: AppColors.shadow.withOpacity(0.12),
+                          shadowColor: AppColors.shadow,
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(
@@ -100,24 +106,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 CircleAvatar(
                                   radius: 38,
                                   backgroundColor: AppColors.accent,
-                                  child: Icon(page.icon, size: 44, color: Colors.white),
+                                  child: Icon(
+                                    page.icon,
+                                    size: 44,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                                const SizedBox(height: 24),
+                                SizedBox(height: context.getHeight(16)),
                                 Text(
                                   page.title,
                                   style: TextStyle(
-                                    fontSize: 26,
+                                    fontSize: context.getFontSize(25),
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textMain,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: context.getHeight(16)),
                                 Text(
                                   page.description,
                                   style: TextStyle(
-                                    fontSize: 18,
-                                    color: AppColors.textMain.withOpacity(0.8),
+                                    fontSize: context.getFontSize(20),
+                                    color: AppColors.textMain,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -135,11 +146,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: List.generate(
                     pages.length,
                     (index) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: context.getWidth(4),
+                        vertical: context.getHeight(18),
+                      ),
                       width: _currentPage == index ? 18 : 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: _currentPage == index ? AppColors.accent : AppColors.curveTop1,
+                        color: _currentPage == index
+                            ? AppColors.accent
+                            : AppColors.curveTop1,
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -147,12 +163,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 // زر التالي أو البدء
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.getWidth(10),
+                    vertical: context.getHeight(12),
+                  ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
+                      backgroundColor: AppColors.shadow,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(
+                        vertical: context.getHeight(8),
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -166,13 +187,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       } else {
                         // انتقل إلى الشاشة الرئيسية أو تسجيل الدخول
                         Navigator.pushAndRemoveUntil(
-  context,
-  MaterialPageRoute(builder: (context) => AccessibleApp()),
-  (Route<dynamic> route) => false, // هذا الشرط يزيل كل الشاشات السابقة
-);
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AccessibleApp(),
+                          ),
+                          (Route<dynamic> route) =>
+                              false, // هذا الشرط يزيل كل الشاشات السابقة
+                        );
+                        return;
                       }
                     },
-                    child: Text(_currentPage < pages.length - 1 ? 'التالي' : 'ابدأ الآن'),
+                    child: Text(
+                      _currentPage < pages.length - 1 ? Lang[Words.start].toString() : 'ابدأ الآن',
+                      style: TextStyle(
+                        fontSize: context.getFontSize(16),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -202,13 +233,16 @@ class TopCurveClipper extends CustomClipper<Path> {
     Path path = Path();
     path.lineTo(0, size.height - 60);
     path.quadraticBezierTo(
-      size.width / 2, size.height,
-      size.width, size.height - 60,
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 60,
     );
     path.lineTo(size.width, 0);
     path.close();
     return path;
   }
+
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
@@ -219,15 +253,13 @@ class BottomCurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     path.moveTo(0, 60);
-    path.quadraticBezierTo(
-      size.width / 2, 0,
-      size.width, 60,
-    );
+    path.quadraticBezierTo(size.width / 2, 0, size.width, 60);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();
     return path;
   }
+
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
