@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
@@ -18,7 +19,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<_OnboardPageData> pages = [
     _OnboardPageData(
-      title: 'مرحباً بك في WishCrafted',
+      title: Lang[Words.welcome],
       description: 'تطبيق يسهّل الوصول للجميع ويقدم تجربة مريحة وذكية.',
       icon: Icons.star,
     ),
@@ -80,9 +81,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     controller: _controller,
                     itemCount: pages.length,
                     onPageChanged: (index) {
-                      setState(() {
+                      logInfo("message onPageChanged: $index");
+                      // setState(() {
+                         logInfo("message setState currentPage: $_currentPage");
                         _currentPage = index;
-                      });
+                      // });
                     },
                     itemBuilder: (context, index) {
                       final page = pages[index];
@@ -192,13 +195,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             builder: (context) => AccessibleApp(),
                           ),
                           (Route<dynamic> route) =>
-                              false, // هذا الشرط يزيل كل الشاشات السابقة
+                              true, // هذا الشرط يزيل كل الشاشات السابقة
                         );
                         return;
                       }
                     },
                     child: Text(
-                      _currentPage < pages.length - 1 ? Lang[Words.start].toString() : 'ابدأ الآن',
+                      _currentPage < pages.length - 1
+                          ? Lang[Words.next].toString()
+                          : Lang[Words.start],
                       style: TextStyle(
                         fontSize: context.getFontSize(16),
                         fontWeight: FontWeight.bold,

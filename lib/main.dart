@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
+import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 
@@ -53,7 +55,7 @@ class WishCraftedApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            title: 'WishCrafted Login',
+            title: Lang[Words.appName],
             locale: value.currentLocale,
             home: SplashScreen(),
             debugShowCheckedModeBanner: false,

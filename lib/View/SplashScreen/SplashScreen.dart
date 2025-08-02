@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 
@@ -58,9 +60,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     Timer(Duration(seconds: 4), () {
       // shared!.setBool('spalsh', true);
-      setState(() {
-        Navigator.pushReplacement(context, PageTransition(OnboardingScreen()));
-      });
+      
+       Navigator.pushAndRemoveUntil(context, PageTransition(OnboardingScreen()),
+       
+        (Route<dynamic> route) => false);
     });
   }
 
@@ -90,9 +93,8 @@ class _SplashScreenState extends State<SplashScreen>
               AnimatedOpacity(
                 duration: Duration(milliseconds: 1500),
                 opacity: _textOpacity,
-                child: Text(
-                  'مرحباً بك في \nWishCrafted',
-                  style: TextStyle(
+                child: Text(Lang[Words.welcome],
+               style: TextStyle(
                     color: AppColors.sliderActive,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
