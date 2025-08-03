@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
-import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
-import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
+import 'package:provider/provider.dart';
+import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
 import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
+import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
+import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -21,7 +23,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardPageData(
       title: Lang[Words.welcome],
       description: 'تطبيق يسهّل الوصول للجميع ويقدم تجربة مريحة وذكية.',
-      icon: Icons.star,
+      icon: Icons.accessibility_new,
+      isAccessibilityPage: true,
     ),
     _OnboardPageData(
       title: 'سهولة الاستخدام',
@@ -29,192 +32,278 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       icon: Icons.touch_app,
     ),
     _OnboardPageData(
-      title: 'دعم الاحتياجات الخاصة',
-      description: 'ميزات مخصصة للمكفوفين وذوي الاحتياجات الخاصة.',
-      icon: Icons.accessibility_new,
+      title: 'تجربة شاملة',
+      description: 'ميزات ذكية لكل احتياجاتك الرقمية.',
+      icon: Icons.star,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // منحنى علوي
-          ClipPath(
-            clipper: TopCurveClipper(),
-            child: Container(
-              height: context.getHeight(200),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.curveTop1, AppColors.curveTop2],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
-          ),
-          // منحنى سفلي
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipPath(
-              clipper: BottomCurveClipper(),
-              child: Container(
-                height: context.getHeight(100),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppColors.curveBottom1, AppColors.curveBottom2],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+    return ChangeNotifierProvider(
+      create: (_) => AccessibilityProvider(),
+      child: Consumer<AccessibilityProvider>(
+        builder: (context, access, child) {
+          final isDark = access.isDarkMode;
+          final bgColor = AppColors.background(isDark);
+          final textColor = AppColors.textMain(isDark);
+          final cardColor = AppColors.card(isDark);
+          final shadowColor = AppColors.shadow(isDark);
+          final accentColor = AppColors.accent(isDark);
+          final curveTop1 = AppColors.curveTop1(isDark);
+          final curveTop2 = AppColors.curveTop2(isDark);
+          final curveBottom1 = AppColors.curveBottom1(isDark);
+          final curveBottom2 = AppColors.curveBottom2(isDark);
+          final sliderActiveColor = AppColors.sliderActive(isDark);
+
+          return Scaffold(
+            backgroundColor: bgColor,
+            body: Stack(
+              children: [
+                ClipPath(
+                  clipper: TopCurveClipper(),
+                  child: Container(
+                    height: context.getHeight(200),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: access.highContrast
+                            ? [Colors.black, Colors.grey[800]!]
+                            : [curveTop1, curveTop2],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-          // محتوى الصفحات
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: PageView.builder(
-                    controller: _controller,
-                    itemCount: pages.length,
-                    onPageChanged: (index) {
-                      logInfo("message onPageChanged: $index");
-                      // setState(() {
-                         logInfo("message setState currentPage: $_currentPage");
-                        _currentPage = index;
-                      // });
-                    },
-                    itemBuilder: (context, index) {
-                      final page = pages[index];
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.getWidth(24),
-                          vertical: context.getHeight(20),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ClipPath(
+                    clipper: BottomCurveClipper(),
+                    child: Container(
+                      height: context.getHeight(100),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: access.highContrast
+                              ? [Colors.grey[800]!, Colors.black]
+                              : [curveBottom1, curveBottom2],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        child: Card(
-                          elevation: 8,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          color: AppColors.card,
-                          shadowColor: AppColors.shadow,
-                          child: Padding(
-                            padding: const EdgeInsets.all(28.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-                                  radius: 38,
-                                  backgroundColor: AppColors.accent,
-                                  child: Icon(
-                                    page.icon,
-                                    size: 44,
-                                    color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: PageView.builder(
+                          controller: _controller,
+                          itemCount: pages.length,
+                          onPageChanged: (index) =>
+                              setState(() => _currentPage = index),
+                          itemBuilder: (context, index) {
+                            final page = pages[index];
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.getWidth(24),
+                                vertical: context.getHeight(20),
+                              ),
+                              child: Semantics(
+                                label: '${page.title}. ${page.description}',
+                                child: Card(
+                                  elevation: 8,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  color: cardColor,
+                                  shadowColor: shadowColor,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(28.0),
+                                    child: page.isAccessibilityPage
+                                        ? Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              AccessibleText("تغيير حجم الخط"),
+                                              Slider(
+                                                value: access.fontSize,
+                                                min: 14,
+                                                max: 36,
+                                                divisions: 11,
+                                                label: access.fontSize
+                                                    .toInt()
+                                                    .toString(),
+                                                activeColor: sliderActiveColor,
+                                                onChanged: (value) {
+                                                  access.fontSize = value;
+                                                  access.notifyListeners();
+                                                },
+                                              ),
+                                              const SizedBox(height: 24),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Switch(
+                                                    value: access.highContrast,
+                                                    onChanged: (value) {
+                                                      access.toggleContrast();
+                                                    },
+                                                    activeColor: accentColor,
+                                                  ),
+                                                  Checkbox(
+                                                    value: access.highContrast,
+                                                    activeColor: accentColor,
+                                                    onChanged: (_) =>
+                                                        access.toggleContrast(),
+                                                  ),
+                                                  AccessibleText(
+                                                    'تفعيل التباين العالي',
+                                                    style: TextStyle(
+                                                      fontSize: access.fontSize,
+                                                      color: textColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 24),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Checkbox(
+                                                    value: access.ttsEnabled,
+                                                    activeColor: accentColor,
+                                                    onChanged: (_) =>
+                                                        access.toggleTTS(),
+                                                  ),
+                                                  AccessibleText(
+                                                    Lang[Words.readscreen],
+                                                    style: TextStyle(
+                                                      fontSize: access.fontSize,
+                                                      color: textColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          )
+                                        : Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 38,
+                                                backgroundColor: accentColor,
+                                                child: Icon(
+                                                  page.icon,
+                                                  size: 44,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: context.getHeight(16),
+                                              ),
+                                              AccessibleText(
+                                                page.title,
+                                                style: TextStyle(
+                                                  fontSize: access.fontSize + 5,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: textColor,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              SizedBox(
+                                                height: context.getHeight(16),
+                                              ),
+                                              AccessibleText(
+                                                page.description,
+                                                style: TextStyle(
+                                                  fontSize: access.fontSize,
+                                                  color: textColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
                                   ),
                                 ),
-                                SizedBox(height: context.getHeight(16)),
-                                Text(
-                                  page.title,
-                                  style: TextStyle(
-                                    fontSize: context.getFontSize(25),
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textMain,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: context.getHeight(16)),
-                                Text(
-                                  page.description,
-                                  style: TextStyle(
-                                    fontSize: context.getFontSize(20),
-                                    color: AppColors.textMain,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          pages.length,
+                          (index) => Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: context.getWidth(4),
+                              vertical: context.getHeight(18),
+                            ),
+                            width: _currentPage == index ? 18 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _currentPage == index
+                                  ? accentColor
+                                  : curveTop1,
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                // مؤشرات الصفحات
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    pages.length,
-                    (index) => Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: context.getWidth(4),
-                        vertical: context.getHeight(18),
                       ),
-                      width: _currentPage == index ? 18 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _currentPage == index
-                            ? AppColors.accent
-                            : AppColors.curveTop1,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-                // زر التالي أو البدء
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.getWidth(10),
-                    vertical: context.getHeight(12),
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.shadow,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        vertical: context.getHeight(8),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (_currentPage < pages.length - 1) {
-                        _controller.nextPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        // انتقل إلى الشاشة الرئيسية أو تسجيل الدخول
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AccessibleApp(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.getWidth(10),
+                          vertical: context.getHeight(12),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: shadowColor,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.getHeight(8),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                          (Route<dynamic> route) =>
-                              true, // هذا الشرط يزيل كل الشاشات السابقة
-                        );
-                        return;
-                      }
-                    },
-                    child: Text(
-                      _currentPage < pages.length - 1
-                          ? Lang[Words.next].toString()
-                          : Lang[Words.start],
-                      style: TextStyle(
-                        fontSize: context.getFontSize(16),
-                        fontWeight: FontWeight.bold,
+                          onPressed: () {
+                            if (_currentPage < pages.length - 1) {
+                              _controller.nextPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeInOut,
+                              );
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AccessibleApp(),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text(
+                            _currentPage < pages.length - 1
+                                ? Lang[Words.next].toString()
+                                : Lang[Words.start],
+                            style: TextStyle(
+                              fontSize: access.fontSize,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -224,14 +313,15 @@ class _OnboardPageData {
   final String title;
   final String description;
   final IconData icon;
+  final bool isAccessibilityPage;
   const _OnboardPageData({
     required this.title,
     required this.description,
     required this.icon,
+    this.isAccessibilityPage = false,
   });
 }
 
-// منحنى علوي
 class TopCurveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -252,7 +342,6 @@ class TopCurveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// منحنى سفلي
 class BottomCurveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

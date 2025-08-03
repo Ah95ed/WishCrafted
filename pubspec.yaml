@@ -17,6 +17,7 @@ dependencies:
 
   cupertino_icons:
   shared_preferences:
+  device_preview:
 
 
 

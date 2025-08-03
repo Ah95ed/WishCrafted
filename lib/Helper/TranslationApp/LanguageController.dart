@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 class LanguageController extends ChangeNotifier{
+  bool isDarkMode = shared.getBool('access_isDarkMode') ?? false;
 final supportLanguage = [
     const Locale.fromSubtags(languageCode: 'ar'),
     const Locale.fromSubtags(languageCode: 'en'),
@@ -18,6 +19,11 @@ final supportLanguage = [
     await initLang(lang);
     notifyListeners();
   }
+  void toggleDarkMode(bool value) {
+  isDarkMode = value;
+  shared.setBool('access_isDarkMode', isDarkMode);
+  notifyListeners();
+}
 }
 
 
@@ -31,5 +37,6 @@ initLang(String lang) async {
   } else {
     Lang = Words.keys['en']!;
   }
+
 
 }
