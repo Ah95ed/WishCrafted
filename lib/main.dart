@@ -7,7 +7,9 @@ import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
+import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
 import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
+import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 
@@ -20,14 +22,7 @@ void main() async {
       runApp(
         MultiProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (_) => LanguageController(),
-              lazy: true,
-            ),
-            ChangeNotifierProvider(
-              create: (_) => AccessibilityProvider(),
-              lazy: true,
-            ),
+            ChangeNotifierProvider(create: (_) => AccessibilityProvider()),
           ],
           child: WishCraftedApp(),
           // child: DevicePreview(
@@ -49,28 +44,38 @@ class WishCraftedApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LanguageController, AccessibilityProvider>(
-      builder: (c, value, access, child) {
+    logError("message from main.dart");
+    return Consumer<AccessibilityProvider>(
+      builder: (c, value, child) {
         return SizeBuilder(
           baseSize: Size(360, 690),
           height: context.screenHeight,
           width: context.screenWidth,
           child: MaterialApp(
+            localeListResolutionCallback: (locales, supportedLocales) {
+              for (var locale in locales!) {
+                if (supportedLocales.contains(locale)) {
+                  return locale;
+                }
+              }
+              return supportedLocales.first;
+            },
             supportedLocales: value.supportLanguage,
-            localizationsDelegates: const [
+            localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
             theme: ThemeData(
               useMaterial3: true,
-              brightness: access.isDarkMode ? Brightness.dark : Brightness.light,
-              // colorSchemeSeed: AppColors.accent,
+
+              brightness: value.isDarkMode ? Brightness.dark : Brightness.light,
+              colorSchemeSeed: AppColors.accent,
               fontFamily: 'Cairo',
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: OnboardingScreen(),
+            home: SplashScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );

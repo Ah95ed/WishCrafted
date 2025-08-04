@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
+import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
@@ -26,22 +24,22 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
-      vsync: this,
+      vsync: this,  
       duration: Duration(seconds: 3),
     );
 
-    animation1 = Tween<double>(begin: 40, end: 20).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.fastLinearToSlowEaseIn,
-      ),
-    )..addListener(() {
-      setState(() {
-        _textOpacity = 1.0;
-      });
-    });
+    animation1 =
+        Tween<double>(begin: 40, end: 20).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: Curves.fastLinearToSlowEaseIn,
+          ),
+        )..addListener(() {
+          setState(() {
+            _textOpacity = 1.0;
+          });
+        });
 
     _controller.forward();
 
@@ -60,10 +58,13 @@ class _SplashScreenState extends State<SplashScreen>
 
     Timer(Duration(seconds: 4), () {
       // shared!.setBool('spalsh', true);
-      
-       Navigator.pushAndRemoveUntil(context, PageTransition(OnboardingScreen()),
-       
-        (Route<dynamic> route) => false);
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(OnboardingScreen()),
+
+        (Route<dynamic> route) => false,
+      );
     });
   }
 
@@ -78,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     double _height = MediaQuery.of(context).size.height;
-  
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -93,31 +94,19 @@ class _SplashScreenState extends State<SplashScreen>
               AnimatedOpacity(
                 duration: Duration(milliseconds: 1500),
                 opacity: _textOpacity,
-                child: Text(Lang[Words.welcome],
-               style: TextStyle(
+                child: Text(
+                  Lang[Words.welcome],
+                  style: TextStyle(
                     color: AppColors.sliderActive,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),
                 ),
               ),
-              // Spacer(),
-              // AnimatedOpacity(
-              //   duration: Duration(milliseconds: 2000),
-              //   curve: Curves.fastLinearToSlowEaseIn,
-              //   opacity: _textOpacity,
-              //   child: Text(
-              //     'جميع الحقوق محفوظة',
-              //     style: TextStyle(
-              //       color: AppColors.sliderActive,
-              //       fontWeight: FontWeight.bold,
-              //       fontSize: 12,
-              // ),
-              //   )
-              // )
+             
             ],
           ),
-      
+
           Center(
             child: AnimatedOpacity(
               duration: Duration(milliseconds: 2000),

@@ -1,210 +1,228 @@
-import 'package:flutter/cupertino.dart';
+
+// Main Page with Curved Design
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
-class AccessibleApp extends StatefulWidget {
-  const AccessibleApp({super.key});
-
+class CurvedHomePage extends StatefulWidget {
   @override
-  State<AccessibleApp> createState() => _AccessibleAppState();
+  _CurvedHomePageState createState() => _CurvedHomePageState();
 }
 
-class _AccessibleAppState extends State<AccessibleApp> {
-  double _fontSize = 18;
-  final FlutterTts _flutterTts = FlutterTts();
+class _CurvedHomePageState extends State<CurvedHomePage>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  // final ThemeController _themeController = ThemeController();
 
   @override
   void initState() {
     super.initState();
-    _flutterTts.setLanguage("ar");
-    _flutterTts.setSpeechRate(0.4);
-    _flutterTts.setPitch(1.0);
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    _animationController.forward();
   }
 
-  Future<void> _speak(String text) async {
-    await _flutterTts.stop();
-    await _flutterTts.speak(text);
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color(0xFFF7FAFC), // لون خلفية هادئ جداً
-    body: Stack(
-      children: [
-        // منحنى علوي
-        ClipPath(
-          clipper: TopCurveClipper(),
-          child: Container(
-            height: 220,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFB2DFDB), Color(0xFFE0F7FA)], // ألوان تركواز فاتح وهادئ
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          // Curved App Bar
+          SliverAppBar(
+            expandedHeight: 280,
+            floating: false,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            flexibleSpace: FlexibleSpaceBar(
+              background: CurvedHeaderWidget(),
             ),
-          ),
-        ),
-        // منحنى سفلي
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: ClipPath(
-            clipper: BottomCurveClipper(),
-            child: Container(
-              height: 120,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFE0F2F1), Color(0xFFB2DFDB)], // ألوان تركواز فاتح وهادئ
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            actions: [
+              // Theme Toggle Button
+              Container(
+                margin: EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: IconButton(
+                  icon: Icon(
+                     Icons.light_mode_rounded 
+                        ,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      // _themeController.toggleTheme();
+                    });
+                  },
                 ),
               ),
-            ),
+            ],
           ),
-        ),
-        // محتوى الشاشة
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
-                Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.teal.withOpacity(0.15),
-                          blurRadius: 16,
-                          offset: const Offset(0, 8),
+          
+          // Content
+          SliverToBoxAdapter(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Welcome Card
+                    CurvedCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'مرحباً بك',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'تصميم منحني جميل مع إدارة متقدمة للثيمات',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    SizedBox(height: 20),
+                    
+                    // Feature Cards Grid
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 15,
+                      childAspectRatio: 1.2,
+                      children: [
+                        FeatureCard(
+                          icon: Icons.palette_rounded,
+                          title: 'الثيمات',
+                          subtitle: 'تبديل سهل',
+                          color: Colors.purple,
+                        ),
+                        FeatureCard(
+                          icon: Icons.design_services_rounded,
+                          title: 'التصميم',
+                          subtitle: 'منحني وأنيق',
+                          color: Colors.blue,
+                        ),
+                        FeatureCard(
+                          icon: Icons.animation_rounded,
+                          title: 'الحركة',
+                          subtitle: 'سلسة ومريحة',
+                          color: Colors.green,
+                        ),
+                        FeatureCard(
+                          icon: Icons.devices_rounded,
+                          title: 'التجاوب',
+                          subtitle: 'جميع الأجهزة',
+                          color: Colors.orange,
                         ),
                       ],
                     ),
-                    child: const CircleAvatar(
-                      radius: 38,
-                      backgroundColor: Color(0xFF80CBC4), // تركواز هادئ
-                      child: Icon(
-                        Icons.accessibility_new,
-                        size: 44,
-                        color: Colors.white,
-                      ),
+                    
+                    SizedBox(height: 30),
+                    
+                    // Action Button
+                    CurvedButton(
+                      text: 'استكشف المزيد',
+                      onPressed: () {
+                        // Action implementation
+                      },
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                Center(
-                  child: Text(
-                    'تسهيل الوصول',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal[700], // لون هادئ للنص
-                      letterSpacing: 1.2,
-                    ),
-                  ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Curved Header Widget
+class CurvedHeaderWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
+        ),
+      ),
+      child: ClipPath(
+        clipper: CurvedBottomClipper(),
+        child: Container(
+          height: 280,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.waves_rounded,
+                  size: 60,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
+                SizedBox(height: 20),
+                Text(
+                  'تصميم منحني',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.teal.withOpacity(0.08),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'الحجم الحالي: ${_fontSize.toInt()}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Slider(
-                        value: _fontSize,
-                        min: 12,
-                        max: 40,
-                        divisions: 14,
-                        activeColor: Colors.teal,
-                        label: _fontSize.toInt().toString(),
-                        onChanged: (value) {
-                          setState(() {
-                            _fontSize = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      buildTextBox("مرحباً بك في تطبيق تسهيل الوصول"),
-                      const SizedBox(height: 15),
-                      buildTextBox("اضغط مطولاً للاستماع إلى هذا النص"),
-                      const SizedBox(height: 15),
-                      buildTextBox("تم تكبير الخط بنجاح!"),
-                    ],
+                ),
+                Text(
+                  'مع إدارة الثيمات',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white.withOpacity(0.9),
                   ),
                 ),
               ],
             ),
           ),
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-Widget buildTextBox(String text) {
-  return GestureDetector(
-    onLongPress: () {
-      _speak(text);
-    },
-    child: AnimatedDefaultTextStyle(
-      duration: const Duration(milliseconds: 300),
-      style: TextStyle(
-        fontSize: _fontSize,
-        color: const Color(0xFF455A64), // رمادي أزرق هادئ
-        fontWeight: FontWeight.w500,
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFE0F2F1), // خلفية تركواز فاتح جداً
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.teal.withOpacity(0.07),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Text(text),
-      ),
-    ),
-  );
-}
-}
-// منحنى علوي
-class TopCurveClipper extends CustomClipper<Path> {
+// Curved Bottom Clipper
+class CurvedBottomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.lineTo(0, size.height - 60);
+    path.lineTo(0, size.height - 50);
     path.quadraticBezierTo(
       size.width / 2,
-      size.height,
+      size.height + 20,
       size.width,
-      size.height - 60,
+      size.height - 50,
     );
     path.lineTo(size.width, 0);
     path.close();
@@ -215,19 +233,141 @@ class TopCurveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// منحنى سفلي
-class BottomCurveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(0, 60);
-    path.quadraticBezierTo(size.width / 2, 0, size.width, 60);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
-  }
+// Curved Card Widget
+class CurvedCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  const CurvedCard({
+    Key? key,
+    required this.child,
+    this.padding,
+  }) : super(key: key);
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: padding ?? EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).cardTheme.shadowColor ?? Colors.grey.withOpacity(0.1),
+            blurRadius: 20,
+            offset: Offset(0, 10),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+// Feature Card Widget
+class FeatureCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+
+  const FeatureCard({
+    Key? key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CurvedCard(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              icon,
+              size: 30,
+              color: color,
+            ),
+          ),
+          SizedBox(height: 15),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 5),
+          Text(
+            subtitle,
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Curved Button Widget
+class CurvedButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  const CurvedButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 55,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            blurRadius: 15,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(30),
+          onTap: onPressed,
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

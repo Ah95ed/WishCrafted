@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
+import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
 
 late SharedPreferences shared;
 
