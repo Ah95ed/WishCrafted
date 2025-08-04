@@ -6,6 +6,9 @@ class Words {
   static const readscreen = "readsScreen";
   static const goalDescription = "goalDescription";
   static const goal = "goal";
+  static const language = "language";
+  static const back = "back";
+  static const fontSize = "fontSize";
 
   @override
   static Map<String, Map<String, String>> get keys => {
@@ -22,6 +25,9 @@ class Words {
       appName: "WishCrafted",
       next: 'التالي',
       welcome: "مرحبا بك" + " في \nWishCrafted",
+      back : "العودة",
+fontSize : "حجم الخط",
+
     },
     'en': {
       goal: "Goal",
@@ -36,6 +42,8 @@ class Words {
       start: "Start",
       next: "Next",
       welcome: "Welcome" + " to \nWishCrafted",
+      back : "Back",
+      fontSize : "Font Size",
     },
   };
 }

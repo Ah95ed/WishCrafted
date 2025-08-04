@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
-import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
-import 'package:wishcrafted/Helper/TranslationApp/LanguageController.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -122,7 +120,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               MainAxisAlignment.center,
                                           children: [
                                             AccessibleText(
-                                              "تغيير حجم الخط",
+                                             Lang[Words.fontSize],
                                               style: TextStyle(
                                                 fontSize: access.fontSize + 5,
                                                 fontWeight: FontWeight.bold,
@@ -380,7 +378,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => CurvedHomePage(),
+                                builder: (_) => AccessibleApp(),
                               ),
                             );
                           }
