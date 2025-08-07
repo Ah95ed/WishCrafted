@@ -7,11 +7,12 @@ import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
+import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 
-void main() async {
+Future<void> main() async {
   await runZonedGuarded<Future<void>>(
     () async {
       // Initialize services
@@ -65,7 +66,6 @@ class WishCraftedApp extends StatelessWidget {
             ],
             theme: ThemeData(
               useMaterial3: true,
-
               brightness: value.isDarkMode ? Brightness.dark : Brightness.light,
               colorSchemeSeed: AppColors.accent,
               fontFamily: 'Cairo',

@@ -20,7 +20,7 @@ class AccessibilityProvider extends ChangeNotifier {
   double fontSize = 20;
   bool highContrast = false;
   bool ttsEnabled = true;
-  String selectedLanguage = shared.getString("lang") ?? 'en'; // أو 'en'
+  String selectedLanguage = shared.getString("lang") ?? 'ar'; // أو 'en'
   final FlutterTts flutterTts = FlutterTts();
   late List<OnboardPageData> pages;
   void initdata() {
@@ -108,12 +108,12 @@ class AccessibilityProvider extends ChangeNotifier {
 
   bool isDarkMode = shared.getBool('access_isDarkMode') ?? false;
   final supportLanguage = [
-    const Locale.fromSubtags(languageCode: 'ar'),
-    const Locale.fromSubtags(languageCode: 'en'),
+     Locale.fromSubtags(languageCode: 'ar'),
+     Locale.fromSubtags(languageCode: 'en'),
   ];
 
   Locale currentLocale = shared.getString("lang") == null
-      ? const Locale('ar')
+      ?  Locale('ar')
       : Locale(shared.getString("lang")!);
 
   Future<void> changeLanguage(String? lang) async {

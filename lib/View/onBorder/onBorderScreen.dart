@@ -40,13 +40,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         isAccessibilityPage: true,
       ),
       OnboardPageData(
-        title: Lang[Words.goal],
+        title: "",
         description: Lang[Words.goalDescription],
         icon: Icons.touch_app,
       ),
       OnboardPageData(
-        title: 'تجربة شاملة',
-        description: 'ميزات ذكية لكل احتياجاتك الرقمية.',
+        title: "",
+        description: Lang[Words.goalDescription2],
         icon: Icons.star,
       ),
     ];
@@ -251,7 +251,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                   width: context.getWidth(8),
                                                 ),
                                                 AccessibleText(
-                                                  'الوضع الليلي',
+                                                  Lang[Words.mode],
                                                   style: TextStyle(
                                                     fontSize: access.fontSize,
                                                     color: AppColors.textMain,
