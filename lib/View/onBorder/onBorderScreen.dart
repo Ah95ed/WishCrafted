@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
-import 'package:wishcrafted/View/SpecialNeedsScreen.dart';
+import 'package:wishcrafted/View/DashboardScreen.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
@@ -32,25 +32,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     logInfo("message from onBorderScreen");
     return Consumer<AccessibilityProvider>(
       builder: (context, access, child) {
- access.pages = [
-      OnboardPageData(
-        title: Lang[Words.welcome],
-        description: 'تطبيق يسهّل الوصول للجميع ويقدم تجربة مريحة وذكية.',
-        icon: Icons.accessibility_new,
-        isAccessibilityPage: true,
-      ),
-      OnboardPageData(
-        title: "",
-        description: Lang[Words.goalDescription],
-        icon: Icons.touch_app,
-      ),
-      OnboardPageData(
-        title: "",
-        description: Lang[Words.goalDescription2],
-        icon: Icons.star,
-      ),
-    ];
-  
+
         return Scaffold(
           backgroundColor: access.isDarkMode ? Colors.black : Colors.white,
           body: Stack(
@@ -378,7 +360,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => AccessibleApp(),
+                                builder: (_) => DashboardScreen(),
                               ),
                             );
                           }

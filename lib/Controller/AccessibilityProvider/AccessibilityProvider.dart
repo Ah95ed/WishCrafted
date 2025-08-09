@@ -23,29 +23,30 @@ class AccessibilityProvider extends ChangeNotifier {
   String selectedLanguage = shared.getString("lang") ?? 'ar'; // أو 'en'
   final FlutterTts flutterTts = FlutterTts();
   late List<OnboardPageData> pages;
-  void initdata() {
+ 
+  Future<void> initdata() async {
     pages = [
       OnboardPageData(
-        title: Lang[Words.welcome],
+        title: '',
         description: 'تطبيق يسهّل الوصول للجميع ويقدم تجربة مريحة وذكية.',
         icon: Icons.accessibility_new,
         isAccessibilityPage: true,
       ),
       OnboardPageData(
-        title: Lang[Words.goal],
-        description: Lang[Words.goalDescription],
+        title: '',
+        description: Lang[Words.goalDescription]??'',
         icon: Icons.touch_app,
       ),
       OnboardPageData(
-        title: 'تجربة شاملة',
-        description: 'ميزات ذكية لكل احتياجاتك الرقمية.',
+        title: '',
+        description:Lang[Words.goalDescription2]??'',
         icon: Icons.star,
       ),
     ];
   }
 
   AccessibilityProvider() {
-    initdata();
+   initdata();
     _loadPrefs();
     flutterTts.setLanguage(shared.getString("lang") ?? 'en');
     flutterTts.setSpeechRate(0.4);
