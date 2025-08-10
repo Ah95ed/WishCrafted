@@ -12,11 +12,11 @@ android {
      lint {
           baseline = file("lint-baseline.xml")
       }
-     externalNativeBuild {
-        cmake {
-            version = "4.0.3"  // تأكد من تطابق الإصدار مع المثبت
-        }
-    }
+  //   externalNativeBuild {
+  //      cmake {
+    //        version = "4.0.3"  // تأكد من تطابق الإصدار مع المثبت
+  //      }
+ //   }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
