@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 
 class OnboardPageData {
   final String title;
   final String description;
-  final IconData icon;
+
   final bool isAccessibilityPage;
   const OnboardPageData({
     required this.title,
     required this.description,
-    required this.icon,
+
     this.isAccessibilityPage = false,
   });
 }
@@ -20,33 +21,31 @@ class AccessibilityProvider extends ChangeNotifier {
   double fontSize = 20;
   bool highContrast = false;
   bool ttsEnabled = true;
-  String selectedLanguage = shared.getString("lang") ?? 'ar'; // أو 'en'
+  late String selectedLanguage = shared.getString("lang")!; // أو 'en'
   final FlutterTts flutterTts = FlutterTts();
   late List<OnboardPageData> pages;
- 
+
   Future<void> initdata() async {
     pages = [
       OnboardPageData(
         title: '',
         description: 'تطبيق يسهّل الوصول للجميع ويقدم تجربة مريحة وذكية.',
-        icon: Icons.accessibility_new,
+        // icon: Icons.accessibility_new,
         isAccessibilityPage: true,
       ),
       OnboardPageData(
         title: '',
-        description: Lang[Words.goalDescription]??'',
-        icon: Icons.touch_app,
+        description: Lang[Words.goalDescription] ,
       ),
       OnboardPageData(
         title: '',
-        description:Lang[Words.goalDescription2]??'',
-        icon: Icons.star,
+        description: Lang[Words.goalDescription2],
       ),
     ];
   }
 
   AccessibilityProvider() {
-   initdata();
+    initdata();
     _loadPrefs();
     flutterTts.setLanguage(shared.getString("lang") ?? 'en');
     flutterTts.setSpeechRate(0.4);
@@ -108,18 +107,18 @@ class AccessibilityProvider extends ChangeNotifier {
   }
 
   bool isDarkMode = shared.getBool('access_isDarkMode') ?? false;
-  final supportLanguage = [
-     Locale.fromSubtags(languageCode: 'ar'),
-     Locale.fromSubtags(languageCode: 'en'),
+  var supportLanguage = [
+    Locale.fromSubtags(languageCode: 'ar'),
+    Locale.fromSubtags(languageCode: 'en'),
   ];
 
   Locale currentLocale = shared.getString("lang") == null
-      ?  Locale('ar')
+      ? Locale('en')
       : Locale(shared.getString("lang")!);
 
   Future<void> changeLanguage(String? lang) async {
-    currentLocale = Locale(lang ?? "ar");
-    await shared.setString("lang", lang!);
+    currentLocale = Locale(lang !);
+    await shared.setString("lang", lang);
     await initLang(lang);
     notifyListeners();
   }

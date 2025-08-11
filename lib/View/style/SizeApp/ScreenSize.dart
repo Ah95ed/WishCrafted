@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 
@@ -35,4 +37,5 @@ extension ScreenSize on BuildContext {
   double getFontSize(num f) {
     return f * scaleWidth;
   }
+  double getMinSize(num f) => f * min(scaleWidth, scaleHeight);
 }

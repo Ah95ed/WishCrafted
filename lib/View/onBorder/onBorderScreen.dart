@@ -19,20 +19,17 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _currentPage = 0;
-  
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    logWarning("message from initState");
   }
 
   @override
   Widget build(BuildContext context) {
-    logInfo("message from onBorderScreen");
     return Consumer<AccessibilityProvider>(
       builder: (context, access, child) {
-
         return Scaffold(
           backgroundColor: access.isDarkMode ? Colors.black : Colors.white,
           body: Stack(
@@ -79,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         onPageChanged: (index) =>
                             setState(() => _currentPage = index),
                         itemBuilder: (context, index) {
-                          final page = access.pages[index];
+                          var page = access.pages[index];
                           return Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: context.getWidth(24),
@@ -95,14 +92,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 color: AppColors.background,
                                 shadowColor: AppColors.shadow,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(28.0),
+                                  padding: EdgeInsets.all(
+                                    context.getMinSize(14),
+                                  ),
                                   child: page.isAccessibilityPage
                                       ? Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
                                             AccessibleText(
-                                             Lang[Words.fontSize],
+                                              Lang[Words.fontSize],
                                               style: TextStyle(
                                                 fontSize: access.fontSize + 5,
                                                 fontWeight: FontWeight.bold,
@@ -207,6 +206,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                           .changeLanguage(
                                                             value,
                                                           );
+                                                          logInfo(" -- value: ${value}");
                                                     },
                                                   ),
                                                 ),
@@ -241,7 +241,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: 24),
+                                            SizedBox(
+                                              height: context.getHeight(6),
+                                            ),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -268,33 +270,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            CircleAvatar(
-                                              radius: 38,
-                                              backgroundColor: AppBar(
-                                                backgroundColor:
-                                                    AppColors.accent,
-                                              ).backgroundColor,
-                                              child: Icon(
-                                                page.icon,
-                                                size: 44,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: context.getHeight(16),
-                                            ),
-                                            AccessibleText(
-                                              page.title,
-                                              style: TextStyle(
-                                                fontSize: access.fontSize + 5,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textMain,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SizedBox(
-                                              height: context.getHeight(16),
-                                            ),
+                                            // SizedBox(
+                                            //   height: context.getHeight(10),
+                                            // ),
+                                            // AccessibleText(
+                                            //   page.title,
+                                            //   style: TextStyle(
+                                            //     fontSize: access.fontSize ,
+                                            //     fontWeight: FontWeight.bold,
+                                            //     color: AppColors.textMain,
+                                            //   ),
+                                            //   textAlign: TextAlign.center,
+                                            // ),
                                             AccessibleText(
                                               page.description,
                                               style: TextStyle(
@@ -320,7 +307,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         (index) => Container(
                           margin: EdgeInsets.symmetric(
                             horizontal: context.getWidth(4),
-                            vertical: context.getHeight(18),
+                            vertical: context.getHeight(8),
                           ),
                           width: _currentPage == index ? 18 : 8,
                           height: 8,
@@ -335,8 +322,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: context.getWidth(10),
-                        vertical: context.getHeight(12),
+                        horizontal: context.getWidth(8),
+                        vertical: context.getHeight(8),
                       ),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -387,5 +374,3 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 }
-
-

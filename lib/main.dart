@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +12,7 @@ import 'package:wishcrafted/View/DashboardScreen.dart';
 import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
 import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
+import 'package:wishcrafted/View/style/SizeApp/DeviceUtils.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 
@@ -81,3 +84,6 @@ class WishCraftedApp extends StatelessWidget {
     );
   }
 }
+
+
+

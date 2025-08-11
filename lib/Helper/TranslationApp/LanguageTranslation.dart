@@ -49,11 +49,11 @@ class Words {
 "We’re here to understand you first and accompany you in choosing what’s truly right for you—with empathy and transparency. 🤝"
 
 "Rest assured, your time, values, and comfort are more important to us than anything else. 💙",
-      goalDescription2 : "🚀 Our journey begins by understanding you, not by selling to you.\n"
+      goalDescription2 : "🚀 Our journey begins by understanding you, not by selling to you."
 
-"🌟 You're here because you have a goal or a desire, and we're here to help you achieve it—without compromising your values or resources. 💡💛\n"
+"🌟 You're here because you have a goal or a desire, and we're here to help you achieve it—without compromising your values or resources. 💡💛"
 
-"✨ We believe every user experience should add meaning and real value to your life—not drain your time and energy for nothing.\n"
+"✨ We believe every user experience should add meaning and real value to your life—not drain your time and energy for nothing."
 
 "🤝 We’re committed to making our platform a space of trust. Our team always strives to offer the best—with transparency 🪞, empathy ❤️, and fairness ⚖️" ,
       goalDescription:
