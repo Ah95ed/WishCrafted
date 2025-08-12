@@ -100,6 +100,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
+                                            SizedBox(
+                                              height: context.getHeight(20),
+                                            ), 
                                             AccessibleText(
                                               Lang[Words.fontSize],
                                               style: TextStyle(
