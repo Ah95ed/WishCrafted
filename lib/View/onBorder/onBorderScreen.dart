@@ -270,18 +270,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            // SizedBox(
-                                            //   height: context.getHeight(10),
-                                            // ),
-                                            // AccessibleText(
-                                            //   page.title,
-                                            //   style: TextStyle(
-                                            //     fontSize: access.fontSize ,
-                                            //     fontWeight: FontWeight.bold,
-                                            //     color: AppColors.textMain,
-                                            //   ),
-                                            //   textAlign: TextAlign.center,
-                                            // ),
+                                            SizedBox(
+                                              height: context.getHeight(10),
+                                            ),
+                                            AccessibleText(
+                                            page.title,
+                                            style: TextStyle(
+                                             fontSize: access.fontSize ,
+                                             fontWeight: FontWeight.bold,
+                                                color: AppColors.textMain,
+                                             ),
+                                              textAlign: TextAlign.center,
+                                             ),
                                             AccessibleText(
                                               page.description,
                                               style: TextStyle(
