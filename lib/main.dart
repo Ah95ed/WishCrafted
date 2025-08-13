@@ -76,7 +76,7 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: DashboardScreen(),
+            home: SplashScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );
