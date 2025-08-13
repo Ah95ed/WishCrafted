@@ -44,9 +44,7 @@ class AuthSocialScreen extends StatelessWidget {
                       size: 24,
                       color: Colors.white,
                     ),
-                    onPressed: () {
-                      
-                    },
+                    onPressed: () {},
                   ),
                   const SizedBox(height: 16),
                   SocialButton(

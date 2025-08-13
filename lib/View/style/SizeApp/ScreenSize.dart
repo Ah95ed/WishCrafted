@@ -23,7 +23,6 @@ extension ScreenSize on BuildContext {
 
   // ! this to calculate height screen part from 100;
   double getHeight(num h) {
-    
     return h * scaleHeight;
   }
 
@@ -37,5 +36,6 @@ extension ScreenSize on BuildContext {
   double getFontSize(num f) {
     return f * scaleWidth;
   }
+
   double getMinSize(num f) => f * min(scaleWidth, scaleHeight);
 }

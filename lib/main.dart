@@ -76,7 +76,7 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: SplashScreen(),
+            home: DashboardScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );
@@ -84,6 +84,3 @@ class WishCraftedApp extends StatelessWidget {
     );
   }
 }
-
-
-

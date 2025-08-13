@@ -12,6 +12,6 @@ class InitService {
   Future<void> initService() async {
     WidgetsFlutterBinding.ensureInitialized();
     shared = await SharedPreferences.getInstance();
-     await initLang(shared.getString('lang') ?? 'en');
+    await initLang(shared.getString('lang') ?? 'en');
   }
 }

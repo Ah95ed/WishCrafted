@@ -22,7 +22,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -102,7 +101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           children: [
                                             SizedBox(
                                               height: context.getHeight(20),
-                                            ), 
+                                            ),
                                             AccessibleText(
                                               Lang[Words.fontSize],
                                               style: TextStyle(
@@ -131,24 +130,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               height: context.getHeight(10),
                                             ),
                                             Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 // اختيار لغة
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: context
-                                                        .getWidth(30),
-                                                  ),
-                                                  child: Text(
-                                                    "اختيار لغة",
-                                                    style: TextStyle(
-                                                      fontSize: access.fontSize,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: AppColors.textMain,
-                                                    ),
+                                                Text(
+                                                                                                 Lang[Words.language],
+                                                  style: TextStyle(
+                                                    fontSize: access.fontSize,
+                                                    fontWeight:
+                                                        FontWeight.bold,
+                                                    color: AppColors.textMain,
                                                   ),
                                                 ),
-                                                const SizedBox(width: 10),
+                                                 SizedBox(width: context.getWidth(8)),
                                                 DropdownButtonHideUnderline(
                                                   child: DropdownButton<String>(
                                                     value:
@@ -172,7 +167,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                             .languageCode,
                                                         child: Row(
                                                           children: [
-                                                            SizedBox(width: 8),
+                                                            SizedBox(width: context.getWidth(8)),
                                                             AccessibleText(
                                                               'العربية',
                                                               style: TextStyle(
@@ -209,7 +204,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                           .changeLanguage(
                                                             value,
                                                           );
-                                                          logInfo(" -- value: ${value}");
+                                  
                                                     },
                                                   ),
                                                 ),
@@ -277,14 +272,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               height: context.getHeight(10),
                                             ),
                                             AccessibleText(
-                                            page.title,
-                                            style: TextStyle(
-                                             fontSize: access.fontSize ,
-                                             fontWeight: FontWeight.bold,
+                                              page.title,
+                                              style: TextStyle(
+                                                fontSize: access.fontSize,
+                                                fontWeight: FontWeight.bold,
                                                 color: AppColors.textMain,
-                                             ),
+                                              ),
                                               textAlign: TextAlign.center,
-                                             ),
+                                            ),
                                             AccessibleText(
                                               page.description,
                                               style: TextStyle(

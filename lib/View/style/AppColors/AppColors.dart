@@ -20,8 +20,8 @@ class AppColors {
   static final Color darkBackground = Color(0xFF121212);
   static final Color darkCurveTop1 = const Color.fromARGB(255, 91, 88, 88);
   static final Color darkCurveTop2 = const Color.fromARGB(255, 91, 88, 88);
-  static final Color darkCurveBottom1 = const  Color.fromARGB(255, 91, 88, 88);
-  static final Color darkCurveBottom2 = const  Color.fromARGB(255, 91, 88, 88);
+  static final Color darkCurveBottom1 = const Color.fromARGB(255, 91, 88, 88);
+  static final Color darkCurveBottom2 = const Color.fromARGB(255, 91, 88, 88);
   static final Color darkCard = const Color.fromARGB(255, 70, 66, 66);
   static final Color darkShadow = Colors.tealAccent;
   static final Color darkAccent = Colors.tealAccent;

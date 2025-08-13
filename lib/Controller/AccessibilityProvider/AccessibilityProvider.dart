@@ -18,10 +18,10 @@ class OnboardPageData {
 }
 
 class AccessibilityProvider extends ChangeNotifier {
-  double fontSize = 20;
+  double fontSize = 16;
   bool highContrast = false;
   bool ttsEnabled = true;
-  late String selectedLanguage = shared.getString("lang")!; // أو 'en'
+  late String selectedLanguage = shared.getString("lang") ?? "en"; // أو 'en'
   final FlutterTts flutterTts = FlutterTts();
   late List<OnboardPageData> pages;
 
@@ -33,14 +33,8 @@ class AccessibilityProvider extends ChangeNotifier {
         // icon: Icons.accessibility_new,
         isAccessibilityPage: true,
       ),
-      OnboardPageData(
-        title: '',
-        description: Lang[Words.goalDescription] ,
-      ),
-      OnboardPageData(
-        title: '',
-        description: Lang[Words.goalDescription2],
-      ),
+      OnboardPageData(title: '', description: Lang[Words.goalDescription]),
+      OnboardPageData(title: '', description: Lang[Words.goalDescription2]),
     ];
   }
 
@@ -117,7 +111,7 @@ class AccessibilityProvider extends ChangeNotifier {
       : Locale(shared.getString("lang")!);
 
   Future<void> changeLanguage(String? lang) async {
-    currentLocale = Locale(lang !);
+    currentLocale = Locale(lang!);
     await shared.setString("lang", lang);
     await initLang(lang);
     notifyListeners();
