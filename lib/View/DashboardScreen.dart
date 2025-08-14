@@ -83,9 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: context.getHeight(8)),
-                      IntentDropdownScreen(
-                        // controller: _intentController,
-                      ),
+                      IntentDropdownScreen(),
                       SizedBox(height: context.getHeight(8)),
                       ElevatedButton.icon(
                         onPressed: () {
