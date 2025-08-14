@@ -82,6 +82,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      TextFormField(
+                        controller: _intentController,
+                        decoration: InputDecoration(
+                          labelText: "أدخل نيتك",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                       SizedBox(height: context.getHeight(8)),
                       IntentDropdownScreen(),
                       SizedBox(height: context.getHeight(8)),
