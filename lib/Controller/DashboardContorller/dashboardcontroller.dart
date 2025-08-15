@@ -82,7 +82,6 @@ class DashboardController extends ChangeNotifier {
     final response = await http.post(
       url,
       headers: {
-        "Authorization": "Bearer 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",
         "Content-Type": "application/json",
       },
       body: jsonEncode({"inputs": message}),
@@ -109,9 +108,7 @@ class DashboardController extends ChangeNotifier {
   //   messages.add(ChatMessage(text: prompt, isUser: true));
   //   isLoading = true;
   //   notifyListeners();
-  //   final apiKey =
-  //       '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'; // ضع مفتاحك هنا
-  //   final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+//  final url = Uri.parse('https://api.openai.com/v1/chat/completions');
   //   final headers = {
   //     'Content-Type': 'application/json',
   //     'Authorization': 'Bearer $apiKey',
