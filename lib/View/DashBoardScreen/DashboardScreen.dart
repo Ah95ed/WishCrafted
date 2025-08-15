@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/Widgets/IntentApp.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
+import 'package:provider/provider.dart';
+import 'package:wishcrafted/Controller/DashboardContorller/dashboardcontroller.dart';
+import 'package:wishcrafted/Provider/chat_provider.dart';
+import 'package:wishcrafted/Models/chat_message.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -14,16 +17,12 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   TextEditingController _intentController = TextEditingController();
 
-  // Future<void> _saveIntent(String intent) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('selected_intent', intent);
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final dashboardController = Provider.of<DashboardController>(context);
+
     return Scaffold(
       backgroundColor: AppColors.background,
-
       body: Stack(
         children: [
           // منحنى علوي
@@ -57,9 +56,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-          // المحتوى
+          // المحتوى مع Scroll
           SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               padding: EdgeInsets.all(context.getMinSize(8)),
               child: Card(
                 color: AppColors.card,
@@ -76,7 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       AccessibleText(
                         "اختر نيتك للبدء",
                         style: TextStyle(
-                          fontSize: context.getFontSize(2),
+                          fontSize: context.getFontSize(16),
                           fontWeight: FontWeight.bold,
                           color: AppColors.textMain,
                         ),
@@ -85,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       TextFormField(
                         controller: _intentController,
                         decoration: InputDecoration(
-                          labelText: "أدخل نيتك",
+                          labelText: "أدخل رسالتك للذكاء الاصطناعي",
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -93,15 +93,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       IntentDropdownScreen(),
                       SizedBox(height: context.getHeight(8)),
                       ElevatedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("لايعمل الان")),
-                          );
-                          // if (_intentController.text.isNotEmpty) {
-                          //   _saveIntent(_intentController.text);
-
-                          //   // Navigator.pushNamed(context, '/journey');
-                          // }
+                        onPressed: () async {
+                          final text = _intentController.text.trim();
+                          if (text.isNotEmpty) {
+                            await dashboardController.sendMessage(text);
+                            _intentController.clear();
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
@@ -112,12 +109,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                         icon: Icon(Icons.rocket_launch),
-                        label: Text("ابدأ الرحلة",
-                            style: TextStyle(
-                          fontSize: context.getFontSize(16),
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textMain,
-                        )),
+                        label: Text(
+                          "ابدأ الرحلة",
+                          style: TextStyle(
+                            fontSize: context.getFontSize(16),
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textMain,
+                          ),
+                        ),
                       ),
                       SizedBox(height: context.getHeight(10)),
                       Divider(),
@@ -137,9 +136,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: AccessibleText(
-                          _intentController.text.isEmpty
-                              ? "لا توجد نية محددة"
-                              : _intentController.text,
+                          dashboardController.selectedIntent?.description ??
+                              "لا توجد نية محددة",
                           style: TextStyle(
                             fontSize: context.getFontSize(14),
                             color: AppColors.textMain,
@@ -161,7 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           color: AppColors.textMain,
                         ),
                       ),
-                      Spacer(),
+                      SizedBox(height: context.getHeight(10)),
                       ElevatedButton.icon(
                         onPressed: () {
                           // Navigator.pushNamed(context, '/intent_insights');
@@ -177,6 +175,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         icon: Icon(Icons.analytics),
                         label: Text("عرض التحليلات المتقدمة"),
                       ),
+                      SizedBox(height: context.getHeight(8)),
+                      AccessibleText(
+                        "محادثة الذكاء الاصطناعي:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textMain,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      dashboardController.isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : GridView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 1,
+                                childAspectRatio: 4,
+                                mainAxisSpacing: 8,
+                              ),
+                              itemCount: dashboardController.messages.length,
+                              itemBuilder: (context, index) {
+                                final msg = dashboardController.messages[index];
+                                return Container(
+                                  alignment: msg.isUser
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: msg.isUser
+                                          ? AppColors.curveTop2
+                                          : AppColors.curveBottom2,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      msg.text,
+                                      style: TextStyle(
+                                        color: AppColors.textMain,
+                                        fontSize: context.getFontSize(14),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                     ],
                   ),
                 ),
@@ -188,3 +231,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

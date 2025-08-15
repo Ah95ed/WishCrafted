@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
-import 'package:wishcrafted/View/DashboardScreen.dart';
+import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
@@ -135,15 +135,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               children: [
                                                 // اختيار لغة
                                                 Text(
-                                                                                                 Lang[Words.language],
+                                                  Lang[Words.language],
                                                   style: TextStyle(
                                                     fontSize: access.fontSize,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: AppColors.textMain,
                                                   ),
                                                 ),
-                                                 SizedBox(width: context.getWidth(8)),
+                                                SizedBox(
+                                                  width: context.getWidth(8),
+                                                ),
                                                 DropdownButtonHideUnderline(
                                                   child: DropdownButton<String>(
                                                     value:
@@ -167,7 +168,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                             .languageCode,
                                                         child: Row(
                                                           children: [
-                                                            SizedBox(width: context.getWidth(8)),
+                                                            SizedBox(
+                                                              width: context
+                                                                  .getWidth(8),
+                                                            ),
                                                             AccessibleText(
                                                               'العربية',
                                                               style: TextStyle(
@@ -204,7 +208,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                           .changeLanguage(
                                                             value,
                                                           );
-                                  
                                                     },
                                                   ),
                                                 ),
