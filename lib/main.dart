@@ -11,9 +11,7 @@ import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/SplashScreen/SplashScreen.dart';
-import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
-import 'package:wishcrafted/View/style/SizeApp/DeviceUtils.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 import 'package:wishcrafted/Provider/chat_provider.dart';
@@ -81,7 +79,7 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: DashboardScreen(),
+            home: SplashScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );
