@@ -96,9 +96,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         onPressed: () async {
                           final text = _intentController.text.trim();
                           if (text.isNotEmpty) {
-                            await dashboardController.sendMessage(text);
+                            await dashboardController.askGemini(text);
                             _intentController.clear();
                           }
+                          dashboardController.selectedIntent.title;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
@@ -121,61 +122,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       SizedBox(height: context.getHeight(10)),
                       Divider(),
                       SizedBox(height: context.getHeight(8)),
-                      AccessibleText(
-                        "النية الحالية:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textMain,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(12),
-                        margin: EdgeInsets.only(top: 4, bottom: 6),
-                        decoration: BoxDecoration(
-                          color: AppColors.curveBottom1,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: AccessibleText(
-                          dashboardController.selectedIntent?.description ??
-                              "لا توجد نية محددة",
-                          style: TextStyle(
-                            fontSize: context.getFontSize(14),
-                            color: AppColors.textMain,
-                          ),
-                        ),
-                      ),
-                      AccessibleText(
-                        "تحليل مبدئي:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textMain,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      AccessibleText(
-                        "هذه النية تفتح فرصًا متعددة، يمكن تقسيمها إلى أهداف فرعية وخطوات تنفيذية...",
-                        style: TextStyle(
-                          fontSize: context.getFontSize(14),
-                          color: AppColors.textMain,
-                        ),
-                      ),
-                      SizedBox(height: context.getHeight(10)),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          // Navigator.pushNamed(context, '/intent_insights');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        icon: Icon(Icons.analytics),
-                        label: Text("عرض التحليلات المتقدمة"),
-                      ),
-                      SizedBox(height: context.getHeight(8)),
+                      // AccessibleText(
+                      //   "النية الحالية:",
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.bold,
+                      //     color: AppColors.textMain,
+                      //   ),
+                      // ),
+                      // Container(
+                      //   padding: EdgeInsets.all(12),
+                      //   margin: EdgeInsets.only(top: 4, bottom: 6),
+                      //   decoration: BoxDecoration(
+                      //     color: AppColors.curveBottom1,
+                      //     borderRadius: BorderRadius.circular(10),
+                      //   ),
+                      //   child: AccessibleText(
+                      //     dashboardController.selectedIntent?.description ??
+                      //         "لا توجد نية محددة",
+                      //     style: TextStyle(
+                      //       fontSize: context.getFontSize(14),
+                      //       color: AppColors.textMain,
+                      //     ),
+                      //   ),
+                      // ),
+                      // AccessibleText(
+                      //   "تحليل مبدئي:",
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.bold,
+                      //     color: AppColors.textMain,
+                      //   ),
+                      // ),
+                      // SizedBox(height: 2),
+                      // AccessibleText(
+                      //   "هذه النية تفتح فرصًا متعددة، يمكن تقسيمها إلى أهداف فرعية وخطوات تنفيذية...",
+                      //   style: TextStyle(
+                      //     fontSize: context.getFontSize(14),
+                      //     color: AppColors.textMain,
+                      //   ),
+                      // ),
+                      // SizedBox(height: context.getHeight(10)),
+                      // ElevatedButton.icon(
+                      //   onPressed: () {
+                      //     // Navigator.pushNamed(context, '/intent_insights');
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: AppColors.accent,
+                      //     foregroundColor: Colors.white,
+                      //     padding: EdgeInsets.symmetric(vertical: 12),
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(12),
+                      //     ),
+                      //   ),
+                      //   icon: Icon(Icons.analytics),
+                      //   label: Text("عرض التحليلات المتقدمة"),
+                      // ),
+                      // SizedBox(height: context.getHeight(8)),
                       AccessibleText(
                         "محادثة الذكاء الاصطناعي:",
                         style: TextStyle(
@@ -186,40 +187,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       SizedBox(height: 8),
                       dashboardController.isLoading
                           ? Center(child: CircularProgressIndicator())
-                          : GridView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 1,
-                                childAspectRatio: 4,
-                                mainAxisSpacing: 8,
+                          : SingleChildScrollView(
+                              child: SizedBox(
+                                child: Text(
+                                  dashboardController.messages
+                                      .map((m) => m.text)
+                                      .join('\n'),
+                                ),
                               ),
-                              itemCount: dashboardController.messages.length,
-                              itemBuilder: (context, index) {
-                                final msg = dashboardController.messages[index];
-                                return Container(
-                                  alignment: msg.isUser
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: msg.isUser
-                                          ? AppColors.curveTop2
-                                          : AppColors.curveBottom2,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      msg.text,
-                                      style: TextStyle(
-                                        color: AppColors.textMain,
-                                        fontSize: context.getFontSize(14),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
                             ),
+
+                      // GridView.builder(
+                      //     shrinkWrap: true,
+                      //     physics: NeverScrollableScrollPhysics(),
+                      //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //       crossAxisCount: 1,
+                      //       childAspectRatio: 4,
+                      //       mainAxisSpacing: 8,
+                      //     ),
+                      //     itemCount: dashboardController.messages.length,
+                      //     itemBuilder: (context, index) {
+                      //       final msg = dashboardController.messages[index];
+                      //       return Container(
+                      //         alignment: msg.isUser
+                      //             ? Alignment.centerRight
+                      //             : Alignment.centerLeft,
+                      //         child: Container(
+                      //           padding: EdgeInsets.all(10),
+                      //           decoration: BoxDecoration(
+                      //             color: msg.isUser
+                      //                 ? AppColors.curveTop2
+                      //                 : AppColors.curveBottom2,
+                      //             borderRadius: BorderRadius.circular(8),
+                      //           ),
+                      //           child: Text(
+                      //             msg.text,
+                      //             style: TextStyle(
+                      //               color: AppColors.textMain,
+                      //               fontSize: context.getFontSize(14),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
                     ],
                   ),
                 ),
@@ -231,6 +242,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+
 //             ),
 //           ),
 //         ],

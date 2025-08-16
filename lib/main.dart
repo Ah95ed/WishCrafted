@@ -24,6 +24,7 @@ Future<void> main() async {
       // Initialize services
       await WidgetsFlutterBinding.ensureInitialized();
       await InitService.instance.initService();
+      
       runApp(
         MultiProvider(
           providers: [

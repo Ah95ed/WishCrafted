@@ -19,6 +19,7 @@ dependencies:
   shared_preferences:
   device_preview:
   http: 
+  google_generative_ai: 
 
 
 
