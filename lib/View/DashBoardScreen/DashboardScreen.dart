@@ -99,7 +99,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             await dashboardController.askGemini(text);
                             _intentController.clear();
                           }
-                          dashboardController.selectedIntent.title;
+                          if(dashboardController.selectedIntent!.title != null) {
+                             await dashboardController.askGemini(text);
+                            //  dashboardController.selectedIntent!.title.toString() = "";
+                          }
+                          // dashboardController.selectedIntent.title;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
