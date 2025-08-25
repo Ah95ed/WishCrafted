@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/Widgets/IntentApp.dart';
@@ -82,7 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       TextFormField(
                         controller: _intentController,
                         decoration: InputDecoration(
@@ -95,16 +96,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       SizedBox(height: context.getHeight(8)),
                       ElevatedButton.icon(
                         onPressed: () async {
-                          final text = _intentController.text.trim();
-                          if (text.isNotEmpty) {
+                          var text = _intentController.text.trim();
+                          text = 'اريد الزواج';
+                          // if (text.isNotEmpty) {
+                          await dashboardController.askGemini(
+                            ' /n هل يمكن ارسال الخمس نقاط على شكل ماب  $text اجبني بخمس نقاط لستخراج اسباب هذه النية كل نقطة لا تزيد عن خمس كلمات',
+                          );
+                          _intentController.clear();
+                          // }
+                          if (dashboardController.selectedIntent!.title !=
+                              null) {
                             await dashboardController.askGemini(text);
-                            _intentController.clear();
-                          }
-                          if(dashboardController.selectedIntent!.title != null) {
-                             await dashboardController.askGemini(text);
                             //  dashboardController.selectedIntent!.title.toString() = "";
                           }
-                          // dashboardController.selectedIntent.title;
+                          dashboardController.selectedIntent!.title;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,

@@ -74,7 +74,7 @@ class _IntentDropdownScreenState extends State<IntentDropdownScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 6),
+                    SizedBox(height: context.getHeight(6)),
                     AccessibleText(
                       intent.description ?? "",
                       style: TextStyle(

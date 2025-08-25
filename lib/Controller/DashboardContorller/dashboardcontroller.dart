@@ -75,7 +75,7 @@ class DashboardController extends ChangeNotifier {
   String apiKey = "AIzaSyCJ6zpgO4xwm3zLHnbuByjX11shBLwH6eo";
 
   Future<void> askGemini(String prompt) async {
-     messages.add(ChatMessage(text: prompt, isUser: true));
+    messages.add(ChatMessage(text: prompt, isUser: true));
     isLoading = true;
     notifyListeners();
     final url = Uri.parse(
@@ -99,27 +99,47 @@ class DashboardController extends ChangeNotifier {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
+      //  final lines = data.split("\n");
+
+      // نحتفظ بس السطور اللي تبدي بأرقام
+
       // النص يرجع عادة بهيكلية nested
-      data['candidates'][0]['content']['parts'][0]['text'] ??
-          'No response';
-          logSuccess("____ $data");
-                messages.add(ChatMessage(text: data['candidates'][0]['content']['parts'][0]['text'].toString(), isUser: false));
+      data['candidates'][0]['content']['parts'][0]['text'] ?? 'No response';
+
+      final points = data
+          .toString()
+          .split("\n")
+          .where((line) => line.trim().startsWith(RegExp(r"[0-9]")))
+          .map((line) {
+            // نشيل الرقم والنقطة
+            return line.replaceFirst(RegExp(r"^[0-9]+\.\s*"), "").trim();
+          })
+          .toList();
+      logError("message : ${points}");
+     for (int i = 0; i < points.length; i++) {
+      logSuccess("message : ${points[i]} \n");
+        // messages.add(ChatMessage(text: points[i].toString(), isUser: false));
+      }
+      // logSuccess("_____ $points");
+      // logSuccess("___________ $lines")
+      // logSuccess("____ $data");
+      // messages.add(ChatMessage(text: data['candidates'][0]['content']['parts'][0]['text'].toString(), isUser: false));
       isLoading = false;
       notifyListeners();
     } else {
-  messages.add(
+      messages.add(
         ChatMessage(
           text: "خطأ: ${response.statusCode} → ${response.body}",
           isUser: false,
         ),
       );
-         isLoading = false;
+      isLoading = false;
       notifyListeners();
       logError("message : ${response.statusCode} - ${response.body}");
       throw Exception('فشل الطلب: ${response.statusCode} - ${response.body}');
     }
-      isLoading = false;
-      notifyListeners();
+    isLoading = false;
+    notifyListeners();
   }
 
   Future<void> sendLangSmithRun({
