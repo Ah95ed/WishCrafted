@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/View/AuthSocialScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
-import 'package:wishcrafted/View/RegisterScreen.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  String confirmPassword = '';
   bool isObscure = true;
+  bool isConfirmObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -75,11 +75,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         CircleAvatar(
                           radius: 40,
                           backgroundColor: AppColors.accent,
-                          child: Icon(Icons.person, size: 48, color: Colors.white),
+                          child: Icon(Icons.person_add, size: 48, color: Colors.white),
                         ),
                         SizedBox(height: 24),
                         Text(
-                          'تسجيل الدخول',
+                          'إنشاء حساب جديد',
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -134,6 +134,35 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           onSaved: (value) => password = value ?? '',
                         ),
+                        SizedBox(height: 16),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'تأكيد كلمة المرور',
+                            prefixIcon: Icon(Icons.lock),
+                            border: OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                isConfirmObscure ? Icons.visibility : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isConfirmObscure = !isConfirmObscure;
+                                });
+                              },
+                            ),
+                          ),
+                          obscureText: isConfirmObscure,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'يرجى تأكيد كلمة المرور';
+                            }
+                            if (value != password) {
+                              return 'كلمات المرور غير متطابقة';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => confirmPassword = value ?? '',
+                        ),
                         SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
@@ -148,43 +177,77 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                // TODO: Handle login logic
+                                // TODO: Handle register logic
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('تم تسجيل الدخول!')),
+                                  SnackBar(content: Text('تم إنشاء الحساب بنجاح!')),
                                 );
                               }
                             },
                             child: Text(
-                              'دخول',
+                              'إنشاء حساب',
                               style: TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),
-                        SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterScreen(),
-                              ),
-                            );
-                          },
-                          child: Text('ليس لديك حساب؟ سجل الآن'),
-                        ),
-                        SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AuthSocialScreen(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'تسجيل الدخول عبر وسائل التواصل الاجتماعي',
+                        SizedBox(height: 24),
+                        Divider(),
+                        SizedBox(height: 16),
+                        Text(
+                          'أو سجل باستخدام',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textMain,
                           ),
+                        ),
+                        SizedBox(height: 16),
+                        SocialButton(
+                          text: 'جوجل',
+                          color: Colors.white,
+                          textColor: Colors.black87,
+                          icon: Icon(
+                            Icons.g_mobiledata,
+                            size: 24,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            // TODO: Google sign-in logic
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        SocialButton(
+                          text: 'فيسبوك',
+                          color: Color(0xFF1877F3),
+                          textColor: Colors.white,
+                          icon: Icon(
+                            Icons.facebook,
+                            size: 24,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            // TODO: Facebook sign-in logic
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        SocialButton(
+                          text: 'تويتر',
+                          color: Color(0xFF1DA1F2),
+                          textColor: Colors.white,
+                          icon: Icon(
+                            Icons.tag,
+                            size: 24,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            // TODO: Twitter sign-in logic
+                          },
+                        ),
+                        SizedBox(height: 24),
+                        TextButton(
+                          onPressed: () {
+                            // TODO: Navigate to login screen
+                            Navigator.pop(context);
+                          },
+                          child: Text('لديك حساب بالفعل؟ تسجيل الدخول'),
                         ),
                       ],
                     ),
@@ -194,6 +257,51 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SocialButton extends StatelessWidget {
+  final String text;
+  final Color color;
+  final Color textColor;
+  final Widget icon;
+  final VoidCallback onPressed;
+
+  const SocialButton({
+    super.key,
+    required this.text,
+    required this.color,
+    required this.textColor,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: textColor,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        ),
+        icon: icon,
+        label: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        onPressed: onPressed,
       ),
     );
   }

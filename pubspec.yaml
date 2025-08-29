@@ -20,6 +20,7 @@ dependencies:
   device_preview:
   http: 
   google_generative_ai: 
+  uuid: 
 
 
 

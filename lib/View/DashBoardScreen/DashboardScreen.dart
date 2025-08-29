@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wishcrafted/Helper/LogApp/Const/Const.dart';
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
+import 'package:wishcrafted/View/DashBoardScreen/ChatAi.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/Widgets/IntentApp.dart';
@@ -17,7 +19,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   TextEditingController _intentController = TextEditingController();
-
+  int? isSelected;
   @override
   Widget build(BuildContext context) {
     final dashboardController = Provider.of<DashboardController>(context);
@@ -57,191 +59,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-          // المحتوى مع Scroll
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              padding: EdgeInsets.all(context.getMinSize(8)),
-              child: Card(
-                color: AppColors.card,
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(context.getMinSize(8)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: context.getHeight(4)),
-                      AccessibleText(
-                        "اختر نيتك للبدء",
-                        style: TextStyle(
-                          fontSize: context.getFontSize(16),
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textMain,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
 
-                      TextFormField(
-                        controller: _intentController,
-                        decoration: InputDecoration(
-                          labelText: "أدخل رسالتك للذكاء الاصطناعي",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      SizedBox(height: context.getHeight(8)),
-                      IntentDropdownScreen(),
-                      SizedBox(height: context.getHeight(8)),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          var text = _intentController.text.trim();
-                          text = 'اريد الزواج';
-                          // if (text.isNotEmpty) {
-                          await dashboardController.askGemini(
-                            ' /n هل يمكن ارسال الخمس نقاط على شكل ماب  $text اجبني بخمس نقاط لستخراج اسباب هذه النية كل نقطة لا تزيد عن خمس كلمات',
-                          );
-                          _intentController.clear();
-                          // }
-                          if (dashboardController.selectedIntent!.title !=
-                              null) {
-                            await dashboardController.askGemini(text);
-                            //  dashboardController.selectedIntent!.title.toString() = "";
-                          }
-                          dashboardController.selectedIntent!.title;
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+          // المحتوى مع Scroll
+          Center(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                padding: EdgeInsets.all(context.getMinSize(4)),
+                child: Container(
+                  height: context.screenHeight * .8,
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.circular(context.getMinSize(16)),
+                  ),
+
+                  child: Padding(
+                    padding: EdgeInsets.all(context.getMinSize(6)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SingleChildScrollView(
+                          child: SizedBox(
+                            height: context.screenHeight * .7,
+                            child: ChatScreen(
+                              dashboardController.messages,
+                              embedded: true,
+                              externalIsLoading: dashboardController.isLoading,
+                            ),
                           ),
                         ),
-                        icon: Icon(Icons.rocket_launch),
-                        label: Text(
-                          "ابدأ الرحلة",
-                          style: TextStyle(
-                            fontSize: context.getFontSize(16),
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textMain,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: context.getHeight(10)),
-                      Divider(),
-                      SizedBox(height: context.getHeight(8)),
-                      // AccessibleText(
-                      //   "النية الحالية:",
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.bold,
-                      //     color: AppColors.textMain,
-                      //   ),
-                      // ),
-                      // Container(
-                      //   padding: EdgeInsets.all(12),
-                      //   margin: EdgeInsets.only(top: 4, bottom: 6),
-                      //   decoration: BoxDecoration(
-                      //     color: AppColors.curveBottom1,
-                      //     borderRadius: BorderRadius.circular(10),
-                      //   ),
-                      //   child: AccessibleText(
-                      //     dashboardController.selectedIntent?.description ??
-                      //         "لا توجد نية محددة",
-                      //     style: TextStyle(
-                      //       fontSize: context.getFontSize(14),
-                      //       color: AppColors.textMain,
-                      //     ),
-                      //   ),
-                      // ),
-                      // AccessibleText(
-                      //   "تحليل مبدئي:",
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.bold,
-                      //     color: AppColors.textMain,
-                      //   ),
-                      // ),
-                      // SizedBox(height: 2),
-                      // AccessibleText(
-                      //   "هذه النية تفتح فرصًا متعددة، يمكن تقسيمها إلى أهداف فرعية وخطوات تنفيذية...",
-                      //   style: TextStyle(
-                      //     fontSize: context.getFontSize(14),
-                      //     color: AppColors.textMain,
-                      //   ),
-                      // ),
-                      // SizedBox(height: context.getHeight(10)),
-                      // ElevatedButton.icon(
-                      //   onPressed: () {
-                      //     // Navigator.pushNamed(context, '/intent_insights');
-                      //   },
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: AppColors.accent,
-                      //     foregroundColor: Colors.white,
-                      //     padding: EdgeInsets.symmetric(vertical: 12),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(12),
-                      //     ),
-                      //   ),
-                      //   icon: Icon(Icons.analytics),
-                      //   label: Text("عرض التحليلات المتقدمة"),
-                      // ),
-                      // SizedBox(height: context.getHeight(8)),
-                      AccessibleText(
-                        "محادثة الذكاء الاصطناعي:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textMain,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      dashboardController.isLoading
-                          ? Center(child: CircularProgressIndicator())
-                          : SingleChildScrollView(
-                              child: SizedBox(
-                                child: Text(
-                                  dashboardController.messages
-                                      .map((m) => m.text)
-                                      .join('\n'),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _intentController,
+                                decoration: InputDecoration(
+                                  labelText: "أدخل رسالتك للذكاء الاصطناعي",
+                                  border: OutlineInputBorder(),
                                 ),
                               ),
                             ),
 
-                      // GridView.builder(
-                      //     shrinkWrap: true,
-                      //     physics: NeverScrollableScrollPhysics(),
-                      //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //       crossAxisCount: 1,
-                      //       childAspectRatio: 4,
-                      //       mainAxisSpacing: 8,
-                      //     ),
-                      //     itemCount: dashboardController.messages.length,
-                      //     itemBuilder: (context, index) {
-                      //       final msg = dashboardController.messages[index];
-                      //       return Container(
-                      //         alignment: msg.isUser
-                      //             ? Alignment.centerRight
-                      //             : Alignment.centerLeft,
-                      //         child: Container(
-                      //           padding: EdgeInsets.all(10),
-                      //           decoration: BoxDecoration(
-                      //             color: msg.isUser
-                      //                 ? AppColors.curveTop2
-                      //                 : AppColors.curveBottom2,
-                      //             borderRadius: BorderRadius.circular(8),
-                      //           ),
-                      //           child: Text(
-                      //             msg.text,
-                      //             style: TextStyle(
-                      //               color: AppColors.textMain,
-                      //               fontSize: context.getFontSize(14),
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       );
-                      //     },
-                      //   ),
-                    ],
+                            ElevatedButton(
+                              child: Icon(
+                                Icons.send,
+                                size: context.getFontSize(24),
+                              ),
+                              onPressed: () async {
+                                // IntentApp.intent(dashboardController.selectedIntent!);
+                                var text = _intentController.text.trim();
+                                await dashboardController.askGemini(text);
+                                _intentController.clear();
+                                text = '';
+                                // if (dashboardController.selectedIntent!.title !=
+                                //     null) {
+                                //   await dashboardController.askGemini(text);
+                                // }
+                                // dashboardController.selectedIntent!.title;
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -252,11 +135,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

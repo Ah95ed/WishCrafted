@@ -73,7 +73,7 @@ class DashboardController extends ChangeNotifier {
   }
 
   String apiKey = "AIzaSyCJ6zpgO4xwm3zLHnbuByjX11shBLwH6eo";
-
+  List points = [];
   Future<void> askGemini(String prompt) async {
     messages.add(ChatMessage(text: prompt, isUser: true));
     isLoading = true;
@@ -85,11 +85,15 @@ class DashboardController extends ChangeNotifier {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
+
       body: jsonEncode({
         "contents": [
           {
             "parts": [
-              {"text": prompt},
+              {
+                "text":
+                    '$prompt \n اعطي اهم 5 متعلقات بهذه النية بما لا يزيد عن خمسين كلمة تقود المستخدم لاتخاذ القرار المنطقي لحفظ الوقت والمال والجهد وتقليل الالم والندم',
+              },
             ],
           },
         ],
@@ -97,34 +101,22 @@ class DashboardController extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      //  final lines = data.split("\n");
-
-      // نحتفظ بس السطور اللي تبدي بأرقام
-
-      // النص يرجع عادة بهيكلية nested
+      var data = jsonDecode(response.body);
       data['candidates'][0]['content']['parts'][0]['text'] ?? 'No response';
 
-      final points = data
-          .toString()
-          .split("\n")
-          .where((line) => line.trim().startsWith(RegExp(r"[0-9]")))
-          .map((line) {
-            // نشيل الرقم والنقطة
-            return line.replaceFirst(RegExp(r"^[0-9]+\.\s*"), "").trim();
-          })
-          .toList();
-      logError("message : ${points}");
-     for (int i = 0; i < points.length; i++) {
-      logSuccess("message : ${points[i]} \n");
-        // messages.add(ChatMessage(text: points[i].toString(), isUser: false));
-      }
-      // logSuccess("_____ $points");
-      // logSuccess("___________ $lines")
-      // logSuccess("____ $data");
-      // messages.add(ChatMessage(text: data['candidates'][0]['content']['parts'][0]['text'].toString(), isUser: false));
+      //  final lines = data.split("\n");
+      logSuccess("message = ${data}");
+
+      // نحتفظ بس السطور اللي تبدي بأرقام
+      messages.add(
+        ChatMessage(
+          text: data['candidates'][0]['content']['parts'][0]['text'].toString(),
+          isUser: false,
+        ),
+      );
       isLoading = false;
+      prompt = '';
+      data = '';
       notifyListeners();
     } else {
       messages.add(

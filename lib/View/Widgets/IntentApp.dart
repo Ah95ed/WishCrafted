@@ -29,7 +29,7 @@ class _IntentDropdownScreenState extends State<IntentDropdownScreen> {
           bool isSelected = selectedIntent == intent;
           return Material(
             color: isSelected
-                ? Theme.of(context).colorScheme.secondary.withOpacity(0.15)
+                ? Theme.of(context).colorScheme.secondary
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
