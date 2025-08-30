@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
+import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -200,47 +201,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         SizedBox(height: 16),
-                        SocialButton(
-                          text: 'جوجل',
+                          SocialButton(
+                        text: 'جوجل',
+                        color: AppColors.curveTop1,
+                        textColor: AppColors.textMain,
+                        icon: Icon(
+                          Icons.g_mobiledata,
+                          size: 30,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          // TODO: Google sign-in logic
+                        },
+                      ),
+                      SizedBox(height: context.getHeight(18)),
+                      SocialButton(
+                        text: 'فيسبوك',
+                        color: AppColors.curveTop1,
+                        textColor: AppColors.textMain,
+                        icon: Icon(
+                          Icons.facebook,
+                          size: 24,
                           color: Colors.white,
-                          textColor: Colors.black87,
-                          icon: Icon(
-                            Icons.g_mobiledata,
-                            size: 24,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            // TODO: Google sign-in logic
-                          },
                         ),
-                        SizedBox(height: 16),
-                        SocialButton(
-                          text: 'فيسبوك',
-                          color: Color(0xFF1877F3),
-                          textColor: Colors.white,
-                          icon: Icon(
-                            Icons.facebook,
-                            size: 24,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            // TODO: Facebook sign-in logic
-                          },
-                        ),
-                        SizedBox(height: 16),
-                        SocialButton(
-                          text: 'تويتر',
-                          color: Color(0xFF1DA1F2),
-                          textColor: Colors.white,
-                          icon: Icon(
-                            Icons.tag,
-                            size: 24,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            // TODO: Twitter sign-in logic
-                          },
-                        ),
+                        onPressed: () {
+                          // TODO: Facebook sign-in logic
+                        },
+                      ),
+                      SizedBox(height:context.getHeight(18)),
+                      SocialButton(
+                        text: 'تويتر',
+                        color: AppColors.curveTop1,
+                        textColor: AppColors.textMain,
+                        icon: Icon(Icons.tag, size: 24, color: Colors.white),
+                        onPressed: () {
+                          // TODO: Twitter sign-in logic
+                        },
+                      ),
                         SizedBox(height: 24),
                         TextButton(
                           onPressed: () {

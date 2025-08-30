@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wishcrafted/Provider/auth_provider.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
+import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
+import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 
 class AuthSocialScreen extends StatelessWidget {
   const AuthSocialScreen({super.key});
@@ -15,7 +19,7 @@ class AuthSocialScreen extends StatelessWidget {
           ClipPath(
             clipper: TopCurveClipper(),
             child: Container(
-              height: 180,
+              height: context.getHeight(100),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [AppColors.curveTop1, AppColors.curveTop2],
@@ -31,7 +35,7 @@ class AuthSocialScreen extends StatelessWidget {
             child: ClipPath(
               clipper: BottomCurveClipper(),
               child: Container(
-                height: 100,
+                height: context.getHeight(80),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [AppColors.curveBottom1, AppColors.curveBottom2],
@@ -43,10 +47,10 @@ class AuthSocialScreen extends StatelessWidget {
             ),
           ),
           // المحتوى مع Scroll
-          SafeArea(
+          Center(
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(context.getMinSize(10)),
               child: Card(
                 color: AppColors.card,
                 elevation: 8,
@@ -54,7 +58,7 @@ class AuthSocialScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(context.getMinSize(10)),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -67,30 +71,89 @@ class AuthSocialScreen extends StatelessWidget {
                       Text(
                         'تسجيل الدخول عبر وسائل التواصل',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: context.getFontSize(18),
                           fontWeight: FontWeight.bold,
                           color: AppColors.textMain,
                         ),
                       ),
-                      SizedBox(height: 32),
+                      SizedBox(height: context.getHeight(18)),
                       SocialButton(
                         text: 'جوجل',
-                        color: Colors.white,
-                        textColor: Colors.black87,
+                        color: AppColors.curveTop1,
+                        textColor: AppColors.textMain,
                         icon: Icon(
                           Icons.g_mobiledata,
-                          size: 24,
+                          size: 30,
                           color: Colors.red,
                         ),
-                        onPressed: () {
-                          // TODO: Google sign-in logic
+                        onPressed: () async {
+                          final authProvider = Provider.of<AuthProvider>(
+                            context,
+                            listen: false,
+                          );
+
+                          // Show loading indicator
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) =>
+                                Center(child: CircularProgressIndicator()),
+                          );
+
+                          try {
+                            final success = await authProvider
+                                .signInWithGoogle();
+
+                            // Close loading dialog
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+
+                            if (success) {
+                              // Navigate to dashboard
+                              if (context.mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DashboardScreen(),
+                                  ),
+                                );
+                              }
+                            } else {
+                              // Show error message
+                              if (context.mounted &&
+                                  authProvider.errorMessage != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(authProvider.errorMessage!),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            // Close loading dialog
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+
+                            // Show error message
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('خطأ في تسجيل الدخول: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
                         },
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: context.getHeight(18)),
                       SocialButton(
                         text: 'فيسبوك',
-                        color: Color(0xFF1877F3),
-                        textColor: Colors.white,
+                        color: AppColors.curveTop1,
+                        textColor: AppColors.textMain,
                         icon: Icon(
                           Icons.facebook,
                           size: 24,
@@ -100,21 +163,17 @@ class AuthSocialScreen extends StatelessWidget {
                           // TODO: Facebook sign-in logic
                         },
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: context.getHeight(18)),
                       SocialButton(
                         text: 'تويتر',
-                        color: Color(0xFF1DA1F2),
-                        textColor: Colors.white,
-                        icon: Icon(
-                          Icons.tag,
-                          size: 24,
-                          color: Colors.white,
-                        ),
+                        color: AppColors.curveTop1,
+                        textColor: AppColors.textMain,
+                        icon: Icon(Icons.tag, size: 24, color: Colors.white),
                         onPressed: () {
                           // TODO: Twitter sign-in logic
                         },
                       ),
-                      SizedBox(height: 24),
+                      SizedBox(height: context.getHeight(18)),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);

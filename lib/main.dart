@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:device_preview/device_preview.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -10,10 +8,12 @@ import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
+import 'package:wishcrafted/View/LoginScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 import 'package:wishcrafted/Provider/chat_provider.dart';
+import 'package:wishcrafted/Provider/auth_provider.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
@@ -21,13 +21,14 @@ Future<void> main() async {
       // Initialize services
       await WidgetsFlutterBinding.ensureInitialized();
       await InitService.instance.initService();
-      
+
       runApp(
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => AccessibilityProvider()),
             ChangeNotifierProvider(create: (_) => DashboardController()),
             ChangeNotifierProvider(create: (_) => ChatProvider()),
+            ChangeNotifierProvider(create: (_) => AuthProvider()),
           ],
           child: WishCraftedApp(),
           // child: DevicePreview(

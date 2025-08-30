@@ -227,7 +227,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                                     );
                                                     // access.toggleContrast();
                                                   },
-                                                  activeColor: AppColors.accent,
+                                                  activeThumbColor: AppColors.accent,
                                                 ),
                                                 SizedBox(
                                                   width: context.getWidth(8),

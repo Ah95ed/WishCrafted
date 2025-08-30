@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/Helper/LogApp/Const/Const.dart';
-import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/View/DashBoardScreen/ChatAi.dart';
-import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
-import 'package:wishcrafted/View/Widgets/IntentApp.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:provider/provider.dart';
 import 'package:wishcrafted/Controller/DashboardContorller/dashboardcontroller.dart';
-import 'package:wishcrafted/Provider/chat_provider.dart';
-import 'package:wishcrafted/Models/chat_message.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -28,19 +22,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
+          // Positioned(child: Text('data',style: TextStyle(fontSize: 50,color: Colors.black),),
+          // top: 2,
+          // ),
+
           // منحنى علوي
           ClipPath(
             clipper: TopCurveClipper(),
             child: Container(
-              height: context.getHeight(120),
+              height: context.getHeight(160),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [AppColors.curveTop1, AppColors.curveTop2],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
+                
               ),
-            ),
+              // child: Text("data")),
+            )
           ),
           // منحنى سفلي
           Align(
@@ -95,6 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           children: [
                             Expanded(
                               child: TextFormField(
+                                maxLines: 1,
                                 controller: _intentController,
                                 decoration: InputDecoration(
                                   labelText: "أدخل رسالتك للذكاء الاصطناعي",
@@ -102,7 +103,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                             ),
-
+                        
                             ElevatedButton(
                               child: Icon(
                                 Icons.send,

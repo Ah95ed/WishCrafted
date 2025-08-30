@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wishcrafted/Helper/LogApp/Const/Const.dart';
+import 'package:wishcrafted/Helper/Constants/Const.dart';
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Models/dasshboardModel/dasshboardModel.dart';
 import 'dart:convert';
@@ -76,9 +76,14 @@ class DashboardController extends ChangeNotifier {
   String apiKey = "AIzaSyCJ6zpgO4xwm3zLHnbuByjX11shBLwH6eo";
   List points = [];
   int click = 0;
+  late String finalText;
   Future<void> askGemini(String prompt) async {
     messages.add(ChatMessage(text: prompt, isUser: true));
-    String finalText = prompt + deepseekPrompts[click];
+    if(click == 0) {
+ finalText = prompt + newprompt;
+    }
+    finalText = prompt;
+    
     isLoading = true;
     notifyListeners();
     final url = Uri.parse(
