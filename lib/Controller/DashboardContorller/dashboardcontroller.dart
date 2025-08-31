@@ -75,15 +75,16 @@ class DashboardController extends ChangeNotifier {
 
   String apiKey = "AIzaSyCJ6zpgO4xwm3zLHnbuByjX11shBLwH6eo";
   List points = [];
-  int click = 0;
+  int click = 1;
   late String finalText;
-  Future<void> askGemini(String prompt) async {
-    messages.add(ChatMessage(text: prompt, isUser: true));
-    if(click == 0) {
- finalText = prompt + newprompt;
-    }
-    finalText = prompt;
-    
+  Future<void> askGemini(String intent) async {
+    messages.add(ChatMessage(text: intent, isUser: true));
+    // if(click == 0) {
+    finalText = intent + (prompts1[click]! + prompts2[click]!);
+    // }
+    // finalText = prompt;
+    logSuccess("message == ${prompts1[click]! + prompts2[click]!}");
+
     isLoading = true;
     notifyListeners();
     final url = Uri.parse(
@@ -125,7 +126,7 @@ class DashboardController extends ChangeNotifier {
       );
       click++;
       isLoading = false;
-      prompt = '';
+      intent = '';
       data = '';
       notifyListeners();
     } else {
