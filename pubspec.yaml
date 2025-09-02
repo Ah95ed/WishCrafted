@@ -22,8 +22,8 @@ dependencies:
   google_generative_ai: 
   uuid:
   # Firebase 
-  google_sign_in: ^6.1.5
-  firebase_core:
+  google_sign_in: ^7.1.1 
+  firebase_core: 
   firebase_auth:
   # cloud_firestore:
   # image_picker:

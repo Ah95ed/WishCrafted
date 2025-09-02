@@ -21,5 +21,6 @@ class InitService {
 
     shared = await SharedPreferences.getInstance();
     await initLang(shared.getString('lang') ?? 'en');
+
   }
 }

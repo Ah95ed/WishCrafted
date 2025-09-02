@@ -101,9 +101,8 @@ class DashboardController extends ChangeNotifier {
             "parts": [
               {
                 "text": '$finalText',
-                // "text":
-                //     '$prompt \n اعطي اهم 5 متعلقات بهذه النية بما لا يزيد عن خمسين كلمة تقود المستخدم لاتخاذ القرار المنطقي لحفظ الوقت والمال والجهد وتقليل الالم والندم',
-              },
+                
+               },
             ],
           },
         ],

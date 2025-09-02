@@ -1,13 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:wishcrafted/Provider/auth_provider.dart';
+import 'package:wishcrafted/Helper/Service/googleService.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
-import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 
-class AuthSocialScreen extends StatelessWidget {
+class AuthSocialScreen extends StatefulWidget {
   const AuthSocialScreen({super.key});
+
+  @override
+  State<AuthSocialScreen> createState() => _AuthSocialScreenState();
+}
+
+class _AuthSocialScreenState extends State<AuthSocialScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    GoogleSignInService.initSignIn();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,66 +98,9 @@ class AuthSocialScreen extends StatelessWidget {
                           color: Colors.red,
                         ),
                         onPressed: () async {
-                          final authProvider = Provider.of<AuthProvider>(
-                            context,
-                            listen: false,
-                          );
-
-                          // Show loading indicator
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) =>
-                                Center(child: CircularProgressIndicator()),
-                          );
-
-                          try {
-                            final success = await authProvider
-                                .signInWithGoogle();
-
-                            // Close loading dialog
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-
-                            if (success) {
-                              // Navigate to dashboard
-                              if (context.mounted) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DashboardScreen(),
-                                  ),
-                                );
-                              }
-                            } else {
-                              // Show error message
-                              if (context.mounted &&
-                                  authProvider.errorMessage != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(authProvider.errorMessage!),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            }
-                          } catch (e) {
-                            // Close loading dialog
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-
-                            // Show error message
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('خطأ في تسجيل الدخول: $e'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          }
+                          UserCredential? s =
+                              await GoogleSignInService.signInWithGoogle();
+                       
                         },
                       ),
                       SizedBox(height: context.getHeight(18)),

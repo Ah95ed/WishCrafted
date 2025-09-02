@@ -7,13 +7,11 @@ import 'package:wishcrafted/Controller/DashboardContorller/dashboardcontroller.d
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
-import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
-import 'package:wishcrafted/View/LoginScreen.dart';
+import 'package:wishcrafted/View/AuthSocialScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 import 'package:wishcrafted/Provider/chat_provider.dart';
-import 'package:wishcrafted/Provider/auth_provider.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
@@ -28,13 +26,9 @@ Future<void> main() async {
             ChangeNotifierProvider(create: (_) => AccessibilityProvider()),
             ChangeNotifierProvider(create: (_) => DashboardController()),
             ChangeNotifierProvider(create: (_) => ChatProvider()),
-            ChangeNotifierProvider(create: (_) => AuthProvider()),
           ],
           child: WishCraftedApp(),
-          // child: DevicePreview(
-          //   enabled: !kReleaseMode,
-          //   builder: (context) => WishCraftedApp(), // Wrap your app
-          // ),
+        
         ),
       );
     },
@@ -79,7 +73,7 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: DashboardScreen(),
+            home: AuthSocialScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );
