@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/googleService.dart';
+import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
@@ -27,8 +28,8 @@ class _AuthSocialScreenState extends State<AuthSocialScreen> {
     // TODO: implement initState
     super.initState();
     // GoogleSignInService.initSignIn();
-     signIn = GoogleSignIn.instance;
-     signIn.initialize(serverClientId: '141006181667-na7a8q4ll7qvesejt11khvr6tu20s4p3.apps.googleusercontent.com');
+    signIn = GoogleSignIn.instance;
+    signIn.initialize();
     // unawaited(
     //   signIn.initialize().then((_) {
     //     signIn.authenticationEvents
@@ -237,20 +238,34 @@ class _AuthSocialScreenState extends State<AuthSocialScreen> {
                           color: Colors.red,
                         ),
                         onPressed: () async {
-                          
                           try {
-                            await signIn.authenticate();
+                            await signIn.authenticate().then((value) {
+                              logSuccess('message --==== ${value.toString()}');
+                              shared.setBool('isLogin', true);
+                              if (value.email != "") {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) {
+                                      return DashboardScreen();
+                                    },
+                                  ),
+                                );
+                              }
+                            });
+                            ;
                             final GoogleSignInAccount? user = _currentUser;
-                            if (user != null) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) {
-                                    return DashboardScreen();
-                                  },
-                                ),
-                              );
-                            }
+
+                            // if (user != null) {
+                            //   Navigator.pushReplacement(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (_) {
+                            //         return DashboardScreen();
+                            //       },
+                            //     ),
+                            //   );
+                            // }
                           } catch (e) {
                             // #enddocregion ExplicitSignIn
                             logError('message:==== ${e.toString()}');

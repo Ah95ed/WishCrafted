@@ -8,6 +8,7 @@ import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/AuthSocialScreen.dart';
+import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
@@ -28,7 +29,6 @@ Future<void> main() async {
             ChangeNotifierProvider(create: (_) => ChatProvider()),
           ],
           child: WishCraftedApp(),
-        
         ),
       );
     },
@@ -73,7 +73,9 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: AuthSocialScreen(),
+            home: shared.getBool('isLogin') == true
+                ? DashboardScreen()
+                : AuthSocialScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );

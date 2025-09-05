@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "677713293845-8bsj9apbj78jk2rfu9mfuoqn3aq99pid.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wishcrafted.iq.net",
+            "certificate_hash": "85e90269eb29d5a6f8a156f9316b8c84bb11b648"
+          }
+        },
+        {
           "client_id": "677713293845-5mce6vpr1tdfhgsa33i7vt65eg40jmb1.apps.googleusercontent.com",
           "client_type": 3
         }
