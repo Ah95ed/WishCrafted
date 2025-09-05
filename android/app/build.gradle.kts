@@ -12,14 +12,6 @@ android {
     namespace = "com.wishcrafted.iq.net"
     compileSdk = 36
     ndkVersion = "28.2.13676358"
-   //  lint {
-         // baseline = file("lint-baseline.xml")
-      //}
-  //   externalNativeBuild {
-  //      cmake {
-    //        version = "4.0.3"  // تأكد من تطابق الإصدار مع المثبت
-  //      }
- //   }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
