@@ -9,22 +9,25 @@ import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
 import 'package:wishcrafted/View/AuthSocialScreen.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
+import 'package:wishcrafted/View/RegisterScreen.dart';
+import 'package:wishcrafted/Controller/auth_provider.dart';
+import 'package:wishcrafted/View/onBorder/onBorderScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
-import 'package:wishcrafted/Provider/chat_provider.dart';
+import 'package:wishcrafted/Controller/chat_provider.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
     () async {
       // Initialize services
-      await WidgetsFlutterBinding.ensureInitialized();
       await InitService.instance.initService();
 
       runApp(
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => AccessibilityProvider()),
+            ChangeNotifierProvider(create: (_) => AuthProvider()),
             ChangeNotifierProvider(create: (_) => DashboardController()),
             ChangeNotifierProvider(create: (_) => ChatProvider()),
           ],
@@ -74,8 +77,11 @@ class WishCraftedApp extends StatelessWidget {
             title: Lang[Words.appName],
             locale: value.currentLocale,
             home: shared.getBool('isLogin') == true
-                ? DashboardScreen()
+                ? shared.getBool('onborded') == true
+                      ? DashboardScreen()
+                      : OnboardingScreen()
                 : AuthSocialScreen(),
+            // home: RegisterScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );

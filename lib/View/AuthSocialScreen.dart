@@ -1,12 +1,8 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
-import 'package:wishcrafted/Helper/Service/googleService.dart';
+import 'package:wishcrafted/Helper/Service/authenticationService.dart' as auth;
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
@@ -21,143 +17,14 @@ class AuthSocialScreen extends StatefulWidget {
 }
 
 class _AuthSocialScreenState extends State<AuthSocialScreen> {
-  GoogleSignInAccount? _currentUser;
-  late GoogleSignIn signIn;
+  late GoogleSignIn googleSignIn;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // GoogleSignInService.initSignIn();
-    signIn = GoogleSignIn.instance;
-    signIn.initialize();
-    // unawaited(
-    //   signIn.initialize().then((_) {
-    //     signIn.authenticationEvents
-    //         .listen(_handleAuthenticationEvent)
-    //         .onError(_handleAuthenticationError);
-
-    //     /// This example always uses the stream-based approach to determining
-    //     /// which UI state to show, rather than using the future returned here,
-    //     /// if any, to conditionally skip directly to the signed-in state.
-    //     signIn.attemptLightweightAuthentication();
-    //   }),
-    // );
-  }
-
-  Future<void> _handleAuthenticationEvent(
-    GoogleSignInAuthenticationEvent event,
-  ) async {
-    // #docregion CheckAuthorization
-    final GoogleSignInAccount? user = // ...
-        // #enddocregion CheckAuthorization
-        switch (event) {
-          GoogleSignInAuthenticationEventSignIn() => event.user,
-          GoogleSignInAuthenticationEventSignOut() => null,
-        };
-
-    // Check for existing authorization.
-    // #docregion CheckAuthorization
-    final GoogleSignInClientAuthorization? authorization = await user
-        ?.authorizationClient
-        .authorizationForScopes(scopes);
-    // #enddocregion CheckAuthorization
-
-    setState(() {
-      // _currentUser = user;
-      // _isAuthorized = authorization != null;
-      // _errorMessage = '';
-    });
-
-    // If the user has already granted access to the required scopes, call the
-    // REST API.
-    if (user != null && authorization != null) {
-      unawaited(_handleGetContact(user));
-    }
-  }
-
-  List<String> scopes = <String>[
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ];
-  Future<void> _handleGetContact(GoogleSignInAccount user) async {
-    setState(() {
-      // _contactText = 'Loading contact info...';
-    });
-    final Map<String, String>? headers = await user.authorizationClient
-        .authorizationHeaders(scopes);
-    if (headers == null) {
-      setState(() {
-        // _contactText = '';
-        // _errorMessage = 'Failed to construct authorization headers.';
-      });
-      return;
-    }
-    final http.Response response = await http.get(
-      Uri.parse(
-        'https://people.googleapis.com/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers',
-      ),
-      headers: headers,
-    );
-    if (response.statusCode != 200) {
-      if (response.statusCode == 401 || response.statusCode == 403) {
-        setState(() {
-          // _isAuthorized = false;
-          // _errorMessage = 'People API gave a ${response.statusCode} response. '
-          'Please re-authorize access.';
-        });
-      } else {
-        print('People API ${response.statusCode} response: ${response.body}');
-        setState(() {
-          // _contactText = 'People API gave a ${response.statusCode} '
-          // 'response. Check logs for details.';
-        });
-      }
-      return;
-    }
-    final Map<String, dynamic> data =
-        json.decode(response.body) as Map<String, dynamic>;
-    final String? namedContact = _pickFirstNamedContact(data);
-    setState(() {
-      if (namedContact != null) {
-        // _contactText = 'I see you know $namedContact!';
-      } else {
-        // _contactText = 'No contacts to display.';
-      }
-    });
-  }
-
-  String? _pickFirstNamedContact(Map<String, dynamic> data) {
-    final List<dynamic>? connections = data['connections'] as List<dynamic>?;
-    final Map<String, dynamic>? contact =
-        connections?.firstWhere(
-              (dynamic contact) =>
-                  (contact as Map<Object?, dynamic>)['names'] != null,
-              orElse: () => null,
-            )
-            as Map<String, dynamic>?;
-    if (contact != null) {
-      final List<dynamic> names = contact['names'] as List<dynamic>;
-      final Map<String, dynamic>? name =
-          names.firstWhere(
-                (dynamic name) =>
-                    (name as Map<Object?, dynamic>)['displayName'] != null,
-                orElse: () => null,
-              )
-              as Map<String, dynamic>?;
-      if (name != null) {
-        return name['displayName'] as String?;
-      }
-    }
-    return null;
-  }
-
-  Future<void> _handleAuthenticationError(Object e) async {
-    setState(() {
-      // _currentUser = null;
-      // _isAuthorized = false;
-      // _errorMessage = e is GoogleSignInException
-      //     ? _errorMessageFromSignInException(e)
-      //     : 'Unknown error: $e';
-    });
+    googleSignIn = GoogleSignIn.instance;
+    googleSignIn.initialize();
   }
 
   @override
@@ -238,64 +105,31 @@ class _AuthSocialScreenState extends State<AuthSocialScreen> {
                           color: Colors.red,
                         ),
                         onPressed: () async {
-                          try {
-                            await signIn.authenticate().then((value) {
-                              logSuccess('message --==== ${value.toString()}');
-                              shared.setBool('isLogin', true);
-                              if (value.email != "") {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) {
-                                      return DashboardScreen();
-                                    },
-                                  ),
-                                );
-                              }
-                            });
-                            ;
-                            final GoogleSignInAccount? user = _currentUser;
-
-                            // if (user != null) {
-                            //   Navigator.pushReplacement(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (_) {
-                            //         return DashboardScreen();
-                            //       },
-                            //     ),
-                            //   );
-                            // }
-                          } catch (e) {
-                            // #enddocregion ExplicitSignIn
-                            logError('message:==== ${e.toString()}');
-                            // #docregion ExplicitSignIn
-                          }
+                          
+                          // try {
+                          //   final UserCredential? result =
+                          //       await auth
+                          //           .AuthenticationService.signInWithProvider(
+                          //         auth.AuthProvider.google,
+                          //       );
+                          //   if (result != null && result.user != null) {
+                          //     logSuccess(
+                          //       'Google login successful: ${result.user?.displayName}',
+                          //     );
+                          //     shared.setBool('isLogin', true);
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (_) => DashboardScreen(),
+                          //       ),
+                          //     );
+                          //   }
+                          // } catch (e) {
+                          //   // #enddocregion ExplicitSignIn
+                          //   logError('message:==== ${e.toString()}');
+                          //   // #docregion ExplicitSignIn
+                          // }
                           //  GoogleSignInAccount sign = await GoogleSignIn.instance.authenticate();
-                        },
-                      ),
-                      SizedBox(height: context.getHeight(18)),
-                      SocialButton(
-                        text: 'فيسبوك',
-                        color: AppColors.curveTop1,
-                        textColor: AppColors.textMain,
-                        icon: Icon(
-                          Icons.facebook,
-                          size: 24,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          // TODO: Facebook sign-in logic
-                        },
-                      ),
-                      SizedBox(height: context.getHeight(18)),
-                      SocialButton(
-                        text: 'تويتر',
-                        color: AppColors.curveTop1,
-                        textColor: AppColors.textMain,
-                        icon: Icon(Icons.tag, size: 24, color: Colors.white),
-                        onPressed: () {
-                          // TODO: Twitter sign-in logic
                         },
                       ),
                       SizedBox(height: context.getHeight(18)),

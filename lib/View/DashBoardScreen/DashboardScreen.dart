@@ -22,9 +22,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // Positioned(child: Text('data',style: TextStyle(fontSize: 50,color: Colors.black),),
-          // top: 2,
-          // ),
 
           // منحنى علوي
           ClipPath(

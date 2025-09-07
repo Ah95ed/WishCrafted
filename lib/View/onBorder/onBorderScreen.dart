@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishcrafted/Controller/AccessibilityProvider/AccessibilityProvider.dart';
+import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/Widgets/AccessibleText/AccessibleText.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
@@ -344,6 +345,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               curve: Curves.easeInOut,
                             );
                           } else {
+                            shared.setBool('onborded', true);
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

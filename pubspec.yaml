@@ -18,15 +18,20 @@ dependencies:
   cupertino_icons:
   shared_preferences:
   device_preview:
-  http: 
+  http:
   google_generative_ai: 
   uuid:
+
   # Firebase 
-  google_sign_in: ^7.1.1 
-  firebase_core: 
+  google_sign_in:
+  firebase_core:
   firebase_auth:
-  # cloud_firestore:
-  # image_picker:
+  # flutter_facebook_auth:
+  # twitter_login:
+
+  appwrite: ^17.1.0
+  
+
 
 
 

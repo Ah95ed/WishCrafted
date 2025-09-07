@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishcrafted/Models/chat_message.dart';
-import 'package:wishcrafted/Provider/chat_provider.dart';
+import 'package:wishcrafted/Controller/chat_provider.dart';
 import 'package:wishcrafted/View/DashBoardScreen/Ai.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 

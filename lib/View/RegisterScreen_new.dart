@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Controller/auth_provider.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/LoginScreen.dart';
-import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -28,27 +25,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _password = TextEditingController();
   final TextEditingController _passwordConfirm = TextEditingController();
   final TextEditingController _phoneNumber = TextEditingController();
-
-  /// Helper method to clean and format phone number for use as userId
-  String _cleanPhoneNumber(String phone) {
-    // Remove spaces, dashes, and parentheses
-    String cleaned = phone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
-
-    // Remove leading + if present for cleaner userId
-    if (cleaned.startsWith('+')) {
-      cleaned = cleaned.substring(1);
-    }
-
-    return cleaned;
-  }
-
-  late final GoogleSignIn signIn;
-  @override
-  void initState() {
-    signIn = GoogleSignIn.instance;
-    signIn.initialize();
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -101,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SafeArea(
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
-              padding: EdgeInsets.all(context.getMinSize(12)),
+              padding: EdgeInsets.all(16),
               child: Card(
                 color: AppColors.card,
                 elevation: 8,
@@ -116,15 +92,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CircleAvatar(
-                          radius: context.getMinSize(32),
+                          radius: 40,
                           backgroundColor: AppColors.accent,
                           child: Icon(
                             Icons.person_add,
-                            size: context.getMinSize(32),
+                            size: 48,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: 24),
                         Text(
                           'إنشاء حساب جديد',
                           style: TextStyle(
@@ -133,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: AppColors.textMain,
                           ),
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: 24),
                         TextFormField(
                           controller: _email,
                           decoration: InputDecoration(
@@ -153,7 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onSaved: (value) => email = value ?? '',
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: 16),
                         TextFormField(
                           controller: _phoneNumber,
                           decoration: InputDecoration(
@@ -167,34 +143,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (value == null || value.isEmpty) {
                               return 'يرجى إدخال رقم الهاتف';
                             }
-                            // Remove spaces and dashes
-                            String cleanPhone = value.replaceAll(
-                              RegExp(r'[\s-]'),
-                              '',
-                            );
-
-                            // Check for valid phone number format
-                            if (!RegExp(
-                              r'^[+]?[0-9]{10,15}$',
-                            ).hasMatch(cleanPhone)) {
-                              return 'يرجى إدخال رقم هاتف صحيح (10-15 رقم)';
+                            if (value.length < 10) {
+                              return 'رقم الهاتف يجب أن يكون 10 أرقام على الأقل';
                             }
-
-                            // Saudi phone number validation (optional)
-                            if (cleanPhone.startsWith('+966') ||
-                                cleanPhone.startsWith('966')) {
-                              if (!RegExp(
-                                r'^(\+966|966)?[0-9]{9}$',
-                              ).hasMatch(cleanPhone)) {
-                                return 'رقم الهاتف السعودي يجب أن يكون 9 أرقام بعد 966';
-                              }
+                            // Basic phone number validation
+                            if (!RegExp(r'^[+]?[0-9]+$').hasMatch(value)) {
+                              return 'يرجى إدخال رقم هاتف صحيح';
                             }
-
                             return null;
                           },
                           onSaved: (value) => phoneNumber = value ?? '',
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: 16),
                         TextFormField(
                           controller: _password,
                           decoration: InputDecoration(
@@ -234,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onSaved: (value) => password = value ?? '',
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: 16),
                         TextFormField(
                           controller: _passwordConfirm,
                           decoration: InputDecoration(
@@ -266,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onSaved: (value) => confirmPassword = value ?? '',
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -282,19 +242,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 : () async {
                                     if (_formKey.currentState!.validate()) {
                                       _formKey.currentState!.save();
-
-                                      // Clean and format phone number for use as userId
-                                      String cleanPhone = _cleanPhoneNumber(
-                                        _phoneNumber.text,
-                                      );
-
                                       final success = await auth.register(
                                         _email.text,
                                         _password.text,
-                                        cleanPhone, // Use cleaned phone number as userId
+                                        _phoneNumber.text,
                                       );
                                       if (success) {
-                                       await shared.setBool('isLogin', true);
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -333,14 +286,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       SizedBox(
-                                        width: context.getWidth(14),
-                                        height: context.getHeight(14),
+                                        width: 20,
+                                        height: 20,
                                         child: CircularProgressIndicator(
                                           color: Colors.white,
                                           strokeWidth: 2,
                                         ),
                                       ),
-                                      SizedBox(width: context.getWidth(8)),
+                                      SizedBox(width: 10),
                                       Text(
                                         'جاري إنشاء الحساب...',
                                         style: TextStyle(
@@ -353,18 +306,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 : Text(
                                     'إنشاء حساب',
                                     style: TextStyle(
-                                      fontSize: context.getFontSize(18),
+                                      fontSize: 18,
                                       color: Colors.white,
                                     ),
                                   ),
                           ),
                         ),
-                        SizedBox(height: context.getHeight(10)),
+                        SizedBox(height: 12),
                         Divider(),
                         Text(
                           'أو سجل باستخدام',
                           style: TextStyle(
-                            fontSize: context.getFontSize(15),
+                            fontSize: 16,
                             color: AppColors.textMain,
                           ),
                         ),
@@ -380,26 +333,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           onPressed: () {
                             // TODO: Google sign-in logic
-                            signIn.authenticate().then((v) {
-                              if (v.email !=null) {
-                                shared.setBool('isLogin', true);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'تم تسجيل الدخول بنجاح',
-                                    ),
-                                    backgroundColor: Colors.green,
-                                    duration: Duration(seconds: 4),
-                                  ),
-                                );
-                                // Navigate to DashboardScreen
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DashboardScreen()
-                                  ));
-                              }
-                            });
                           },
                         ),
                         SizedBox(height: 24),
