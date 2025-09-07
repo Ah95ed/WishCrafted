@@ -9,6 +9,8 @@ import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/LoginScreen.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 
+import 'onBorder/onBorderScreen.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -109,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(context.getMinSize(16)),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -124,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: context.getHeight(8)),
                         Text(
                           'إنشاء حساب جديد',
                           style: TextStyle(
@@ -133,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: AppColors.textMain,
                           ),
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: context.getHeight(8)),
                         TextFormField(
                           controller: _email,
                           decoration: InputDecoration(
@@ -153,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onSaved: (value) => email = value ?? '',
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: context.getHeight(8)),
                         TextFormField(
                           controller: _phoneNumber,
                           decoration: InputDecoration(
@@ -194,7 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onSaved: (value) => phoneNumber = value ?? '',
                         ),
-                        SizedBox(height: context.getHeight(12)),
+                        SizedBox(height: context.getHeight(8)),
                         TextFormField(
                           controller: _password,
                           decoration: InputDecoration(
@@ -310,7 +312,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                DashboardScreen(),
+                                                OnboardingScreen(),
                                           ),
                                         );
                                       } else {
@@ -396,7 +398,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => DashboardScreen()
+                                    builder: (context) => OnboardingScreen()
                                   ));
                               }
                             });

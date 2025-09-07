@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wishcrafted/View/DashBoardScreen/ChatAi.dart';
 import 'package:wishcrafted/View/Widgets/CurveClipper/CurveClipper.dart';
+import 'package:wishcrafted/View/Widgets/ChatHistoryDrawer/ChatHistoryDrawer.dart';
 import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:provider/provider.dart';
@@ -14,30 +15,86 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   TextEditingController _intentController = TextEditingController();
   int? isSelected;
+    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+
+  @override
+  void initState() {
+    super.initState();
+    // تحميل المحادثات المحفوظة عند بدء الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DashboardController>(
+        context,
+        listen: false,
+      ).loadChatSessions();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final dashboardController = Provider.of<DashboardController>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.background,
+      drawer: ChatHistoryDrawer(),
       body: Stack(
         children: [
-
           // منحنى علوي
-          ClipPath(
-            clipper: TopCurveClipper(),
-            child: Container(
-              height: context.getHeight(160),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.curveTop1, AppColors.curveTop2],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+          Positioned(
+            top: -context.getHeight(20),
+            left: 0,
+            right: 0,
+            // bottom: 0,
+            child: ClipPath(
+              clipper: TopCurveClipper(),
+              child: Container(
+                height: context.getHeight(150),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.curveTop1, AppColors.curveTop2],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // زر فتح الدراوير
+                    IconButton(
+                      onPressed: () {
+                        _scaffoldKey.currentState?.openDrawer();
+                        // Scaffold.of(context).openDrawer();
+                      },
+                      icon: Icon(Icons.menu, color: AppColors.textMain, size: 28),
+                    ),
                 
+                    // العنوان
+                    Text(
+                      'WishCrafted AI',
+                      style: TextStyle(
+                        color:AppColors.textMain,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                   
+                
+                    // زر محادثة جديدة
+                    IconButton(
+                      onPressed: () {
+                        dashboardController.startNewChat();
+                      },
+                      icon: Icon(
+                        Icons.add_comment,
+                        color: AppColors.textMain,
+                        size: 28,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              // child: Text("data")),
-            )
+            ),
           ),
           // منحنى سفلي
           Align(
@@ -100,7 +157,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                             ),
-                        
+
                             ElevatedButton(
                               child: Icon(
                                 Icons.send,

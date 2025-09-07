@@ -17,6 +17,8 @@ import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 import 'package:wishcrafted/Controller/chat_provider.dart';
 
+import 'View/RegisterScreen.dart';
+
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
     () async {
@@ -76,12 +78,12 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: shared.getBool('isLogin') == true
-                ? shared.getBool('onborded') == true
-                      ? DashboardScreen()
-                      : OnboardingScreen()
-                : AuthSocialScreen(),
-            // home: RegisterScreen(),
+            // home: shared.getBool('isLogin') == true
+            //     ? shared.getBool('onborded') == true
+            //           ? DashboardScreen()
+            //           : OnboardingScreen()
+            //     : RegisterScreen(),
+            home: DashboardScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );

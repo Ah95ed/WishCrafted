@@ -5,6 +5,8 @@ import 'package:wishcrafted/Models/dasshboardModel/dasshboardModel.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:wishcrafted/Models/chat_message.dart';
+import 'package:wishcrafted/Models/chat_session.dart';
+import 'package:wishcrafted/Helper/chat_storage_service.dart';
 
 class DashboardController extends ChangeNotifier {
   List<DashboardModel> intents = [
@@ -66,7 +68,104 @@ class DashboardController extends ChangeNotifier {
   List<ChatMessage> messages = [];
   bool isLoading = false;
 
-  // تحديث النية المختارة
+  // إدارة المحادثات
+  List<ChatSession> chatSessions = [];
+  ChatSession? currentSession;
+
+  // تحميل المحادثات عند بدء التطبيق
+  Future<void> loadChatSessions() async {
+    chatSessions = await ChatStorageService.loadChatSessions();
+    final currentSessionId = await ChatStorageService.getCurrentSessionId();
+
+    if (currentSessionId != null) {
+      currentSession = chatSessions.firstWhere(
+        (session) => session.id == currentSessionId,
+        orElse: () => _createNewSession(),
+      );
+      messages = List.from(currentSession!.messages);
+    } else {
+      _createNewSession();
+    }
+
+    notifyListeners();
+  }
+
+  // إنشاء محادثة جديدة
+  ChatSession _createNewSession() {
+    final now = DateTime.now();
+    final newSession = ChatSession(
+      id: 'chat_${now.millisecondsSinceEpoch}',
+      title: 'محادثة جديدة',
+      createdAt: now,
+      lastUpdated: now,
+      messages: [],
+    );
+
+    currentSession = newSession;
+    messages = [];
+    return newSession;
+  }
+
+  // بدء محادثة جديدة
+  void startNewChat() {
+    _createNewSession();
+    notifyListeners();
+  }
+
+  // تحديد محادثة موجودة
+  void selectChatSession(ChatSession session) {
+    currentSession = session;
+    messages = List.from(session.messages);
+    ChatStorageService.setCurrentSessionId(session.id);
+    notifyListeners();
+  }
+
+  // حفظ المحادثة الحالية
+  Future<void> _saveCurrentSession() async {
+    if (currentSession != null && messages.isNotEmpty) {
+      final updatedSession = currentSession!.copyWith(
+        title: ChatStorageService.generateChatTitle(messages),
+        lastUpdated: DateTime.now(),
+        messages: messages,
+      );
+
+      await ChatStorageService.saveChatSession(updatedSession);
+
+      // تحديث المحادثة في القائمة
+      final existingIndex = chatSessions.indexWhere(
+        (s) => s.id == updatedSession.id,
+      );
+      if (existingIndex != -1) {
+        chatSessions[existingIndex] = updatedSession;
+      } else {
+        chatSessions.add(updatedSession);
+      }
+
+      currentSession = updatedSession;
+      notifyListeners();
+    }
+  }
+
+  // حذف محادثة
+  Future<void> deleteChatSession(String sessionId) async {
+    await ChatStorageService.deleteChatSession(sessionId);
+    chatSessions.removeWhere((session) => session.id == sessionId);
+
+    if (currentSession?.id == sessionId) {
+      startNewChat();
+    }
+
+    notifyListeners();
+  }
+
+  // مسح جميع المحادثات
+  Future<void> clearAllChatSessions() async {
+    await ChatStorageService.clearAllSessions();
+    chatSessions.clear();
+    startNewChat();
+    notifyListeners();
+  } // تحديث النية المختارة
+
   void setSelectedIntent(DashboardModel? intent) {
     selectedIntent = intent;
     logInfo("تم تحديث النية المختارة:  ${intent?.description}");
@@ -99,10 +198,7 @@ class DashboardController extends ChangeNotifier {
         "contents": [
           {
             "parts": [
-              {
-                "text": '$finalText',
-                
-               },
+              {"text": '$finalText'},
             ],
           },
         ],
@@ -127,6 +223,10 @@ class DashboardController extends ChangeNotifier {
       isLoading = false;
       intent = '';
       data = '';
+
+      // حفظ المحادثة تلقائياً
+      await _saveCurrentSession();
+
       notifyListeners();
     } else {
       messages.add(
@@ -136,6 +236,10 @@ class DashboardController extends ChangeNotifier {
         ),
       );
       isLoading = false;
+
+      // حفظ المحادثة حتى لو كان هناك خطأ
+      await _saveCurrentSession();
+
       notifyListeners();
       logError("message : ${response.statusCode} - ${response.body}");
       throw Exception('فشل الطلب: ${response.statusCode} - ${response.body}');
