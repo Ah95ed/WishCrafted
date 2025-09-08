@@ -15,8 +15,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   TextEditingController _intentController = TextEditingController();
   int? isSelected;
-    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -66,20 +65,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         _scaffoldKey.currentState?.openDrawer();
                         // Scaffold.of(context).openDrawer();
                       },
-                      icon: Icon(Icons.menu, color: AppColors.textMain, size: 28),
+                      icon: Icon(
+                        Icons.menu,
+                        color: AppColors.textMain,
+                        size: 28,
+                      ),
                     ),
-                
+
                     // العنوان
                     Text(
                       'WishCrafted AI',
                       style: TextStyle(
-                        color:AppColors.textMain,
+                        color: AppColors.textMain,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                   
-                
+
                     // زر محادثة جديدة
                     IconButton(
                       onPressed: () {

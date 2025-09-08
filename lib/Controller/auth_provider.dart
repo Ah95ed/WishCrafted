@@ -164,4 +164,44 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  /// Delete user account
+  Future<bool> deleteAccount() async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final res = await _service.deleteAccount();
+      if (res) {
+        isLoggedIn = false;
+        isSuccess = false;
+        error = null;
+        isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        error = 'فشل حذف الحساب. يرجى المحاولة مرة أخرى';
+        isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      isLoading = false;
+
+      // Handle specific delete account errors
+      String errorMessage = 'حدث خطأ غير متوقع';
+      if (e.toString().contains('user_unauthorized')) {
+        errorMessage = 'ليس لديك صلاحية لحذف هذا الحساب';
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'تعذر الاتصال بالشبكة';
+      } else {
+        errorMessage = 'فشل حذف الحساب';
+      }
+
+      error = errorMessage;
+      notifyListeners();
+      return false;
+    }
+  }
 }

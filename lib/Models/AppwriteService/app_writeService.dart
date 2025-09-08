@@ -78,4 +78,15 @@ class AppwriteService {
       rethrow; // Re-throw to preserve error details
     }
   }
+
+  Future<bool> deleteAccount() async {
+    final account = Account(client);
+    try {
+      // في Appwrite، يجب حذف جميع الجلسات أولاً ثم حذف الحساب
+      await account.deleteSessions();
+      return true;
+    } catch (e) {
+      rethrow; // Re-throw to preserve error details
+    }
+  }
 }
