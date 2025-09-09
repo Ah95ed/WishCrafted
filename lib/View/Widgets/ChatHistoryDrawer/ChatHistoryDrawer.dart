@@ -9,8 +9,72 @@ import 'package:wishcrafted/View/RegisterScreen.dart';
 import 'package:wishcrafted/View/style/AppColors/AppColors.dart';
 import 'package:wishcrafted/View/LoginScreen.dart';
 
-class ChatHistoryDrawer extends StatelessWidget {
+class ChatHistoryDrawer extends StatefulWidget {
   const ChatHistoryDrawer({Key? key}) : super(key: key);
+
+  @override
+  State<ChatHistoryDrawer> createState() => _ChatHistoryDrawerState();
+}
+
+class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
+  final TextEditingController confirmController = TextEditingController();
+
+  @override
+  void dispose() {
+    confirmController.dispose();
+    super.dispose();
+  }
+
+  void _showDeleteAccountConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: Text(
+          'حذف الحساب نهائياً',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'تحذير: هذا الإجراء لا يمكن التراجع عنه!',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('سيتم حذف:', style: TextStyle(color: AppColors.textMain)),
+            Text(
+              '• حسابك بشكل نهائي',
+              style: TextStyle(color: AppColors.textMain),
+            ),
+            Text(
+              '• جميع محادثاتك مع الذكاء الاصطناعي',
+              style: TextStyle(color: AppColors.textMain),
+            ),
+            Text(
+              '• جميع بياناتك الشخصية',
+              style: TextStyle(color: AppColors.textMain),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('إلغاء', style: TextStyle(color: AppColors.textMain)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              _showFinalDeleteConfirmation(context);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('متابعة', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,97 +82,6 @@ class ChatHistoryDrawer extends StatelessWidget {
       backgroundColor: AppColors.background,
       child: Column(
         children: [
-          // رأس الدراوير مع معلومات المستخدم
-          // Container(
-          //   width: double.infinity,
-          //   decoration: BoxDecoration(
-          //     gradient: LinearGradient(
-          //       colors: [AppColors.curveTop1, AppColors.curveTop2],
-          //       begin: Alignment.topLeft,
-          //       end: Alignment.bottomRight,
-          //     ),
-          //   ),
-          //   child: SafeArea(
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(16.0),
-          //       child: Column(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           Row(
-          //             children: [
-          //               CircleAvatar(
-          //                 radius: 30,
-          //                 backgroundColor: Colors.white.withOpacity(0.3),
-          //                 child: Icon(
-          //                   Icons.person,
-          //                   size: 32,
-          //                   color: Colors.white,
-          //                 ),
-          //               ),
-          //               SizedBox(width: 12),
-          //               Expanded(
-          //                 child: Column(
-          //                   crossAxisAlignment: CrossAxisAlignment.start,
-          //                   children: [
-          //                     Text(
-          //                       'مرحباً بك',
-          //                       style: TextStyle(
-          //                         color: Colors.white,
-          //                         fontSize: 20,
-          //                         fontWeight: FontWeight.bold,
-          //                       ),
-          //                     ),
-          //                     Consumer<DashboardController>(
-          //                       builder: (context, controller, child) {
-          //                         return Text(
-          //                           '${controller.chatSessions.length} محادثة محفوظة',
-          //                           style: TextStyle(
-          //                             color: Colors.white.withOpacity(0.9),
-          //                             fontSize: 14,
-          //                           ),
-          //                         );
-          //                       },
-          //                     ),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-          // SafeArea(
-          //   child: SizedBox(
-          //     width: double.infinity,
-          //     child: ElevatedButton.icon(
-          //       onPressed: () {
-          //         context.read<DashboardController>().startNewChat();
-          //         Navigator.pop(context);
-          //       },
-          //       icon: Icon(Icons.add, color: Colors.white),
-          //       label: Text(
-          //         'محادثة جديدة',
-          //         style: TextStyle(
-          //           color: Colors.white,
-          //           fontSize: 16,
-          //           fontWeight: FontWeight.bold,
-          //         ),
-          //       ),
-          //       style: ElevatedButton.styleFrom(
-          //         backgroundColor: AppColors.accent,
-          //         padding: EdgeInsets.symmetric(vertical: 12),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(12),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-          // قائمة المحادثات
           Expanded(
             child: SafeArea(
               child: Consumer<DashboardController>(
@@ -275,27 +248,51 @@ class ChatHistoryDrawer extends StatelessWidget {
             child: Column(
               children: [
                 // تسجيل الخروج
-                ListTile(
-                  leading: Icon(Icons.logout, color: AppColors.accent),
-                  title: Text(
-                    'تسجيل الخروج',
-                    style: TextStyle(color: AppColors.textMain, fontSize: 16),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.transparent,
                   ),
-                  onTap: () {
-                    _showLogoutConfirmation(context);
-                  },
+                  child: ListTile(
+                    leading: Icon(Icons.logout, color: AppColors.accent),
+                    title: Text(
+                      'تسجيل الخروج',
+                      style: TextStyle(color: AppColors.textMain, fontSize: 16),
+                    ),
+                    onTap: () {
+                      print('🔄 تم الضغط على تسجيل الخروج');
+                      _showLogoutConfirmation(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hoverColor: AppColors.accent.withOpacity(0.1),
+                  ),
                 ),
 
                 // حذف الحساب
-                ListTile(
-                  leading: Icon(Icons.delete_forever, color: Colors.red),
-                  title: Text(
-                    'حذف الحساب',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.transparent,
                   ),
-                  onTap: () {
-                    _showDeleteAccountConfirmation(context);
-                  },
+                  child: ListTile(
+                    leading: Icon(Icons.delete_forever, color: Colors.red),
+                    title: Text(
+                      'حذف الحساب',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                    onTap: () {
+                      print('🗑️ تم الضغط على حذف الحساب');
+                      _showDeleteAccountConfirmation(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hoverColor: Colors.red.withOpacity(0.1),
+                  ),
                 ),
 
                 // مسح جميع المحادثات
@@ -407,7 +404,7 @@ class ChatHistoryDrawer extends StatelessWidget {
   void _showLogoutConfirmation(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: AppColors.card,
         title: Text(
           'تسجيل الخروج',
@@ -415,41 +412,45 @@ class ChatHistoryDrawer extends StatelessWidget {
         ),
         content: Text(
           'هل أنت متأكد من تسجيل الخروج؟',
-          style: TextStyle(color: AppColors.textMain.withOpacity(0.8)),
+          style: TextStyle(color: AppColors.textMain),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(color: AppColors.textMain.withOpacity(0.7)),
-            ),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('إلغاء', style: TextStyle(color: AppColors.textMain)),
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context); // أغلق الحوار أولاً
+              Navigator.pop(dialogContext);
               final authProvider = context.read<AuthProvider>();
-              final success = await authProvider.logout();
-
-              if (success) {
-                // مسح جميع المحادثات المحلية
-                context.read<DashboardController>().clearAllChatSessions();
-                shared.remove('isLogin');
-                shared.remove('onborded');
-                // العودة إلى شاشة تسجيل الدخول
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                  (route) => false,
-                );
-              } else {
+              bool success = false;
+              String? errorMsg;
+              try {
+                success = await authProvider.logout();
+              } catch (e) {
+                errorMsg = e.toString();
+              }
+              context.read<DashboardController>().clearAllChatSessions();
+              shared.remove('isLogin');
+              shared.remove('onborded');
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => RegisterScreen()),
+              );
+              Future.delayed(Duration(milliseconds: 100), () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(authProvider.error ?? 'فشل تسجيل الخروج'),
-                    backgroundColor: Colors.red,
+                    content: Text(
+                      success
+                          ? 'تم تسجيل الخروج بنجاح'
+                          : (authProvider.error ??
+                                errorMsg ??
+                                'فشل تسجيل الخروج'),
+                    ),
+                    backgroundColor: success ? Colors.green : Colors.red,
                   ),
                 );
-              }
+              });
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.accent),
             child: Text('تسجيل الخروج', style: TextStyle(color: Colors.white)),
@@ -459,61 +460,7 @@ class ChatHistoryDrawer extends StatelessWidget {
     );
   }
 
-  void _showDeleteAccountConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.card,
-        title: Text(
-          'حذف الحساب نهائياً',
-          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'تحذير: هذا الإجراء لا يمكن التراجع عنه!',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text('سيتم حذف:', style: TextStyle(color: AppColors.textMain)),
-            Text(
-              '• حسابك بشكل نهائي',
-              style: TextStyle(color: AppColors.textMain),
-            ),
-            Text(
-              '• جميع محادثاتك مع الذكاء الاصطناعي',
-              style: TextStyle(color: AppColors.textMain),
-            ),
-            Text(
-              '• جميع بياناتك الشخصية',
-              style: TextStyle(color: AppColors.textMain),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: TextStyle(color: AppColors.textMain)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              _showFinalDeleteConfirmation(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('متابعة', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showFinalDeleteConfirmation(BuildContext context) {
-    final TextEditingController confirmController = TextEditingController();
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -555,35 +502,40 @@ class ChatHistoryDrawer extends StatelessWidget {
           Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
               return ElevatedButton(
-                // onPressed: () {
-                //    Navigator.pop(context);
-                // },
                 onPressed: authProvider.isLoading
                     ? null
                     : () async {
                         if (confirmController.text.trim() == 'حذف الحساب') {
-                          final success = await authProvider.deleteAccount();
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) =>
+                                Center(child: CircularProgressIndicator()),
+                          );
+                          bool success = false;
+                          String? errorMsg;
+                          try {
+                            success = await authProvider.deleteAccount();
+                            // .deleteAccountWithCloudFunction('07812591236');
+                          } catch (e) {
+                            errorMsg = e.toString();
+                          }
+                          Navigator.pop(context); // أغلق مؤشر التحميل
+                          // تنظيف الحالة المحلية دائماً
+                          context
+                              .read<DashboardController>()
+                              .clearAllChatSessions();
 
+                          shared.remove('onborded');
+                          shared.remove('isLogin');
+                          Navigator.pop(context); // أغلق نافذة التأكيد
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RegisterScreen(),
+                            ),
+                          );
                           if (success) {
-                            // مسح جميع المحادثات المحلية
-                            context
-                                .read<DashboardController>()
-                                .clearAllChatSessions();
-
-                            confirmController.dispose();
-                            Navigator.pop(context);
-
-                            shared.remove('onborded');
-                            shared.remove('isLogin');
-
-                            // العودة إلى شاشة تسجيل الدخول
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RegisterScreen(),
-                              ),
-                            );
-
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('تم حذف الحساب بنجاح'),
@@ -594,7 +546,9 @@ class ChatHistoryDrawer extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  authProvider.error ?? 'فشل حذف الحساب',
+                                  authProvider.error ??
+                                      errorMsg ??
+                                      'فشل حذف الحساب',
                                 ),
                                 backgroundColor: Colors.red,
                               ),

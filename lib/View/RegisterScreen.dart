@@ -24,12 +24,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String password = '';
   String confirmPassword = '';
   String phoneNumber = '';
+  String userName = '';
   bool isObscure = true;
   bool isConfirmObscure = true;
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _passwordConfirm = TextEditingController();
   final TextEditingController _phoneNumber = TextEditingController();
+  final TextEditingController _userName = TextEditingController();
 
   /// Helper method to clean and format phone number for use as userId
   String _cleanPhoneNumber(String phone) {
@@ -58,6 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _password.dispose();
     _passwordConfirm.dispose();
     _phoneNumber.dispose();
+    _userName.dispose();
     super.dispose();
   }
 
@@ -134,6 +137,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             fontWeight: FontWeight.bold,
                             color: AppColors.textMain,
                           ),
+                        ),
+                        SizedBox(height: context.getHeight(8)),
+                        TextFormField(
+                          controller: _userName,
+                          decoration: InputDecoration(
+                            labelText: 'اسم المستخدم',
+                            prefixIcon: Icon(Icons.person),
+                            border: OutlineInputBorder(),
+                            hintText: 'أدخل اسم المستخدم',
+                          ),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'يرجى إدخال اسم المستخدم';
+                            }
+                            if (value.length < 3) {
+                              return 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل';
+                            }
+                            if (value.length > 20) {
+                              return 'اسم المستخدم يجب أن يكون أقل من 20 حرف';
+                            }
+                            // التحقق من الأحرف المسموحة (أحرف وأرقام ومسافة)
+                            if (!RegExp(
+                              r'^[a-zA-Z0-9\u0600-\u06FF\s]+$',
+                            ).hasMatch(value)) {
+                              return 'يمكن أن يحتوي اسم المستخدم على أحرف وأرقام فقط';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => userName = value ?? '',
                         ),
                         SizedBox(height: context.getHeight(8)),
                         TextFormField(
@@ -294,9 +327,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         _email.text,
                                         _password.text,
                                         cleanPhone, // Use cleaned phone number as userId
+                                        _userName.text, // إضافة اسم المستخدم
                                       );
                                       if (success) {
-                                       await shared.setBool('isLogin', true);
+                                        await shared.setBool('isLogin', true);
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -383,24 +417,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onPressed: () {
                             // TODO: Google sign-in logic
                             signIn.authenticate().then((v) {
-                              if (v.email !=null) {
-                                shared.setBool('isLogin', true);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'تم تسجيل الدخول بنجاح',
-                                    ),
-                                    backgroundColor: Colors.green,
-                                    duration: Duration(seconds: 4),
-                                  ),
-                                );
-                                // Navigate to DashboardScreen
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => OnboardingScreen()
-                                  ));
-                              }
+                              shared.setBool('isLogin', true);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('تم تسجيل الدخول بنجاح'),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 4),
+                                ),
+                              );
+                              // Navigate to DashboardScreen
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OnboardingScreen(),
+                                ),
+                              );
                             });
                           },
                         ),
