@@ -7,7 +7,6 @@ import 'package:wishcrafted/Controller/DashboardContorller/dashboardcontroller.d
 import 'package:wishcrafted/Helper/LogApp/LogApp.dart';
 import 'package:wishcrafted/Helper/Service/initService.dart';
 import 'package:wishcrafted/Helper/TranslationApp/LanguageTranslation.dart';
-import 'package:wishcrafted/View/AuthSocialScreen.dart';
 import 'package:wishcrafted/View/DashBoardScreen/DashboardScreen.dart';
 import 'package:wishcrafted/View/RegisterScreen.dart';
 import 'package:wishcrafted/Controller/auth_provider.dart';
@@ -17,9 +16,6 @@ import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 import 'package:wishcrafted/Controller/chat_provider.dart';
 
-import 'Helper/Service/initService.dart';
-import 'View/RegisterScreen.dart';
-import 'View/onBorder/onBorderScreen.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
