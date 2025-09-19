@@ -52,7 +52,7 @@ android {
     }
  signingConfigs {
     
-    //    signingConfig = signingConfigs.getByName("debug")
+        signingConfig = signingConfigs.getByName("debug")
   create("release") {
         storeFile = keystoreProperties["storeFile"]?.let { file(it) }
         storePassword = keystoreProperties["storePassword"] as String?
