@@ -75,12 +75,12 @@ class WishCraftedApp extends StatelessWidget {
             ),
             title: Lang[Words.appName],
             locale: value.currentLocale,
-            home: shared.getBool('isLogin') == true
-                ? shared.getBool('onborded') == true
-                      ? DashboardScreen()
-                      : OnboardingScreen()
-                : RegisterScreen(),
-            // home: DashboardScreen(),
+            // home: shared.getBool('isLogin') == true
+            //     ? shared.getBool('onborded') == true
+            //           ? DashboardScreen()
+            //           : OnboardingScreen()
+            //     : RegisterScreen(),
+            home: DashboardScreen(),
             debugShowCheckedModeBanner: false,
           ),
         );

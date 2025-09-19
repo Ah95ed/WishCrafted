@@ -157,6 +157,38 @@ class DashboardController extends ChangeNotifier {
 
     notifyListeners();
   }
+String _safeLocale(String? l) =>
+    (l == 'en' || l == 'ar') ? l! : 'ar';
+
+int _clampClick(int click) =>
+    click.clamp(1, 15);
+
+String _buildSystemInstruction({
+  required int click,
+  required String locale,
+}) {
+  final idx = _clampClick(click);
+  final p1 = prompts1[idx]?[locale]?.trim() ?? '';
+  final p2 = prompts2[idx]?[locale]?.trim() ?? '';
+  return [p1, p2].where((s) => s.isNotEmpty).join("\n\n");
+}
+
+// استخراج آمن لنص الاستجابة من Gemini
+String _extractGeminiText(dynamic data) {
+  try {
+    final cands = data['candidates'];
+    if (cands is List && cands.isNotEmpty) {
+      final parts = cands[0]?['content']?['parts'];
+      if (parts is List && parts.isNotEmpty) {
+        final text = parts[0]?['text'];
+        if (text is String && text.trim().isNotEmpty) {
+          return text;
+        }
+      }
+    }
+  } catch (_) {}
+  return 'No response';
+}
 
   // مسح جميع المحادثات
   Future<void> clearAllChatSessions() async {
@@ -176,77 +208,206 @@ class DashboardController extends ChangeNotifier {
   List points = [];
   int click = 1;
   late String finalText;
-  Future<void> askGemini(String intent) async {
-    messages.add(ChatMessage(text: intent, isUser: true));
-    // if(click == 0) {
-    finalText = intent + (prompts1[click]! + prompts2[click]!);
-    // }
-    // finalText = prompt;
-    logSuccess("message == ${prompts1[click]! + prompts2[click]!}");
 
-    isLoading = true;
-    notifyListeners();
-    final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey',
-    );
 
+  Future<void> askGemini(
+  String intent, {
+  String? locale,        // "ar" أو "en"
+  double temperature = 0.6,
+  int maxOutputTokens = 512,
+}) async {
+  final lang = _safeLocale(locale);
+  final step = _clampClick(click);
+
+  // 1) أضِف رسالة المستخدم إلى واجهتك
+  messages.add(ChatMessage(text: intent, isUser: true));
+
+  // 2) ابنِ System Instruction من البري-برومبت المناسب
+  final systemInstruction = _buildSystemInstruction(click: step, locale: lang);
+
+  isLoading = true;
+  notifyListeners();
+
+  final url = Uri.parse(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey'
+  );
+
+  // 3) تهيئة الطلب (نرسل البري-برومبت كـ system_instruction وليس ضمن نص المستخدم)
+  // final body = {
+  //   "system_instruction": {
+  //     "parts": [
+  //       {"text": systemInstruction}
+  //     ]
+  //   },
+  //   "contents": [
+  //     {
+  //       "role": "user",
+  //       "parts": [
+  //         {"text": intent}
+  //       ]
+  //     }
+  //   ],
+  //   "generationConfig": {
+  //     "temperature": temperature,
+  //     "topK": 32,
+  //     "topP": 0.9,
+  //     "maxOutputTokens": maxOutputTokens,
+  //     "stopSequences": [] // لا نوقف مبكرًا
+  //   },
+  //   // إعدادات أمان خفيفة (اختياري)
+  //   "safetySettings": [
+  //     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+  //     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+  //     {"category": "HARM_CATEGORY_SEXUAL", "threshold": "BLOCK_NONE"},
+  //     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+  //   ]
+  // };
+
+
+final body = {
+  "system_instruction": {
+    "parts": [
+      {"text": systemInstruction}
+    ]
+  },
+  "contents": [
+    {
+      "role": "user",
+      "parts": [{"text": intent}]
+    }
+  ],
+  "generationConfig": {
+    "temperature": temperature,
+    "topK": 32,
+    "topP": 0.9,
+    "maxOutputTokens": maxOutputTokens,
+    "stopSequences": []
+  },
+  "safetySettings": [
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+    // {"category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_NONE"}, // اختياري
+  ]
+};
+
+
+
+
+  try {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-
-      body: jsonEncode({
-        "contents": [
-          {
-            "parts": [
-              {"text": '$finalText'},
-            ],
-          },
-        ],
-      }),
+      body: jsonEncode(body),
     );
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      data['candidates'][0]['content']['parts'][0]['text'] ?? 'No response';
 
-      //  final lines = data.split("\n");
-      logSuccess("message = ${data}");
+      final reply = _extractGeminiText(data);
+      logSuccess("Gemini reply = ${reply.substring(0, reply.length.clamp(0, 500))}");
 
-      // نحتفظ بس السطور اللي تبدي بأرقام
-      messages.add(
-        ChatMessage(
-          text: data['candidates'][0]['content']['parts'][0]['text'].toString(),
-          isUser: false,
-        ),
-      );
-      click++;
+      // 4) أضِف رد النموذج
+      messages.add(ChatMessage(text: reply, isUser: false));
+
+      // 5) تقدّم للخطوة التالية
+      click = (step < 15) ? step + 1 : 15;
+
+      // 6) صيانة الحالة
       isLoading = false;
-      intent = '';
-      data = '';
 
-      // حفظ المحادثة تلقائياً
+      // حفظ الجلسة
       await _saveCurrentSession();
-
       notifyListeners();
     } else {
-      messages.add(
-        ChatMessage(
-          text: "خطأ: ${response.statusCode} → ${response.body}",
-          isUser: false,
-        ),
-      );
+      final err = "خطأ: ${response.statusCode} → ${response.body}";
+      messages.add(ChatMessage(text: err, isUser: false));
       isLoading = false;
-
-      // حفظ المحادثة حتى لو كان هناك خطأ
       await _saveCurrentSession();
-
       notifyListeners();
-      logError("message : ${response.statusCode} - ${response.body}");
+      logError("Gemini Error : ${response.statusCode} - ${response.body}");
       throw Exception('فشل الطلب: ${response.statusCode} - ${response.body}');
     }
+  } catch (e, st) {
     isLoading = false;
+    messages.add(ChatMessage(text: "استثناء: $e", isUser: false));
+    await _saveCurrentSession();
     notifyListeners();
+    logError("Exception: $e\n$st");
+    rethrow;
   }
+}
+
+  // Future<void> askGemini(String intent) async {
+  //   messages.add(ChatMessage(text: intent, isUser: true));
+    
+   
+  //   // finalText = intent + (prompts1[click]! + prompts2[click]!);
+  
+  //   isLoading = true;
+  //   notifyListeners();
+  //   final url = Uri.parse(
+  //     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey',
+  //   );
+
+  //   final response = await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+
+  //     body: jsonEncode({
+  //       "contents": [
+  //         {
+  //           "parts": [
+  //             {"text": '$intent'}
+  //           ],
+  //         },
+  //       ],
+  //     }),
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     var data = jsonDecode(response.body);
+  //     data['candidates'][0]['content']['parts'][0]['text'] ?? 'No response';
+
+  //     //  final lines = data.split("\n");
+  //     logSuccess("message = ${data}");
+
+  //     // نحتفظ بس السطور اللي تبدي بأرقام
+  //     messages.add(
+  //       ChatMessage(
+  //         text: data['candidates'][0]['content']['parts'][0]['text'].toString(),
+  //         isUser: false,
+  //       ),
+  //     );
+  //     click++;
+  //     isLoading = false;
+  //     intent = '';
+  //     data = '';
+
+  //     // حفظ المحادثة تلقائياً
+  //     await _saveCurrentSession();
+
+  //     notifyListeners();
+  //   } else {
+  //     messages.add(
+  //       ChatMessage(
+  //         text: "خطأ: ${response.statusCode} → ${response.body}",
+  //         isUser: false,
+  //       ),
+  //     );
+  //     isLoading = false;
+
+  //     // حفظ المحادثة حتى لو كان هناك خطأ
+  //     await _saveCurrentSession();
+
+  //     notifyListeners();
+  //     logError("message : ${response.statusCode} - ${response.body}");
+  //     throw Exception('فشل الطلب: ${response.statusCode} - ${response.body}');
+  //   }
+  //   isLoading = false;
+  //   notifyListeners();
+  // }
 
   Future<void> sendLangSmithRun({
     required String name,
