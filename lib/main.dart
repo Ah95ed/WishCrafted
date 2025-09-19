@@ -16,7 +16,6 @@ import 'package:wishcrafted/View/style/SizeApp/ScreenSize.dart';
 import 'package:wishcrafted/View/style/SizeApp/SizeBuilder.dart';
 import 'package:wishcrafted/Controller/chat_provider.dart';
 
-
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
     () async {
